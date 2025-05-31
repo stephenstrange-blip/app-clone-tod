@@ -65,8 +65,51 @@ async function createUser({
     });
 }
 
-async function fetchProfile() {
+async function fetchProfile({ userId }) {
+  return await prisma.profile.findUnique({
+    where: {
+      userId,
+    },
+    select: {
+      firstName: true,
+      lastName: true,
+      bio: true,
+      title: true,
+      userId: true,
+      _count: {
+        select: {
+          followers: true,
+          following: true,
+          requests: true,
+          comments: true,
+          reaction: true,
+        },
+      },
+    },
+  });
   return;
 }
 
-module.exports = { fetchCredentials, fetchUser, createUser };
+async function addProfile(opts) {
+  return await prisma.profile.create({
+    data: opts,
+  });
+}
+
+async function putProfile(opts) {
+  return await prisma.profile.update({
+    where: {
+      userId: opts.userId,
+    },
+    data: opts,
+  });
+}
+
+module.exports = {
+  fetchCredentials,
+  fetchUser,
+  createUser,
+  fetchProfile,
+  addProfile,
+  putProfile,
+};
