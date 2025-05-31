@@ -8,7 +8,7 @@ const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const prisma = require("../db/prisma").prisma;
 
-const { fetchCredentials, fetchUser, createUser } = require("../db/database");
+const { fetchCredentials, fetchUser, addUser } = require("../db/database");
 
 require("dotenv").config();
 
@@ -91,7 +91,7 @@ passport.use(
         let user = await fetchUser({ githubId: profile.id });
 
         // add to database for first time logins using github account
-        if (_.isEmpty(user)) user = await createUser({ githubId: profile.id });
+        if (_.isEmpty(user)) user = await addUser({ githubId: profile.id });
 
         // user = { githubId: Int, id: Int}
         done(null, user);

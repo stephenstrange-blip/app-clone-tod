@@ -1,12 +1,12 @@
 const bcrypt = require("bcrypt");
-const { createUser } = require("../db/database");
+const { addUser } = require("../db/database");
 
 // ---------------------- Local (signup) STRATEGY ------------------------//
 exports.signup = async (req, res, next) => {
   try {
     const { username, password } = req.body;
     const hashed = await bcrypt.hash(password, 10);
-    const result = await createUser({ username, password: hashed });
+    const result = await addUser({ username, password: hashed });
 
     res
       .status(200)
