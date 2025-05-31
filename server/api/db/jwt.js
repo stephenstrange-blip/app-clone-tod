@@ -30,8 +30,8 @@ exports.signToken = async (req, res, next) => {
     {
       algorithm: "HS256",
       expiresIn: "1d",
-      audience: "http://localhost:8080/",
-      issuer: "http://localhost:8080/",
+      audience: "http://localhost:8080",
+      issuer: "http://localhost:8080",
     },
     (err, token) => {
       if (err) next(err, false);

@@ -27,9 +27,9 @@ const GITHUB = {
 
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: "secret",
-  audience: "http://localhost:8080/",
-  issuer: "http://localhost:8080/",
+  secretOrKey: process.env.JWT_SECRET,
+  audience: "http://localhost:8080",
+  issuer: "http://localhost:8080",
   algorithms: ["HS256"],
   ignoreExpiration: true,
 };
@@ -56,30 +56,12 @@ passport.use(
       if (!username || !password) done(ERROR.MISSING, false);
 
       const user = await fetchCredentials({ username });
-      if (!user) done(ERROR.INVALID, false);
+      if (!user) return done(new Error(ERROR.INVALID_INPUT), false);
 
       const match = await bcrypt.compare(password, user.password);
-      if (!match) done(ERROR.INVALID_INPUT, false);
+      if (!match) return done(new Error(ERROR.INVALID_INPUT), false);
 
       await prisma.$disconnect();
-      (req, res, next) => {
-        const { username, id } = req.user;
-        console.log(`Logging in... Username: ${username}, id: ${id}`);
-        jwt.sign(
-          { username, id },
-          "secret",
-          {
-            algorithm: "HS256",
-            expiresIn: "1d",
-            audience: "http://localhost:8080/",
-            issuer: "http://localhost:8080/",
-          },
-          (err, token) => {
-            if (err) next(err);
-            else res.json({ token });
-          }
-        );
-      };
       // pass username and id for jwt signing
       done(null, { username, id: user.id });
     } catch (err) {
