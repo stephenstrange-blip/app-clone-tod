@@ -35,7 +35,10 @@ exports.signToken = async (req, res, next) => {
     },
     (err, token) => {
       if (err) next(err, false);
-      else res.json({ token });
+      else {
+        res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+        res.status(200).json({ token });
+      }
     }
   );
 };

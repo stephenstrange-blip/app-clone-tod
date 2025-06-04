@@ -34,8 +34,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(passport.session());
 
-// app.options("{*any}", cors({ origin: "http://locahost:5173/" }));
-app.options("{*any}", cors({ origin: true }));
+app.options(
+  "{*any}",
+  cors({ origin: "http://localhost:5173" }),
+  (req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+    next();
+  }
+);
+// app.options("{*any}", cors({ origin: "*" }));
 
 app.use("/signup", routes.signup);
 app.use("/auth/local", routes.login);
