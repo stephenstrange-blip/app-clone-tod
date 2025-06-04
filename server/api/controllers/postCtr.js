@@ -5,7 +5,7 @@ exports.fetchPost = async (req, res, next) => {
     const { postId } = req.params;
 
     const post = await getPost({ postId: Number(postId) });
-    res.status(200).json({ data: { post } });
+    res.status(200).json({ post });
   } catch (err) {
     next(err);
   }
@@ -20,7 +20,7 @@ exports.createPost = async (req, res, next) => {
     if (categoryId) opts["categoryId"] = Number(categoryId);
 
     const post = await addPost(opts);
-    res.status(200).json({ data: { post } });
+    res.status(200).json({ post });
   } catch (err) {
     next(err);
   }
@@ -37,12 +37,12 @@ exports.updatePost = async (req, res, next) => {
     if (published) opts["published"] = published === "true" ? true : false;
 
     if (_.isEmpty(opts))
-      return res.status(200).json({ data: { message: "Nothing to update" } });
+      return res.status(200).json({ message: "Nothing to update" });
 
     opts = { ...opts, postId: Number(req.params.postId) };
 
     const post = await putPost(opts);
-    res.status(200).json({ data: { post } });
+    res.status(200).json({ post });
   } catch (err) {
     next(err);
   }
@@ -52,9 +52,7 @@ exports.removePost = async (req, res, next) => {
   try {
     const { postId } = req.params;
     await deletePost({ postId: Number(postId) });
-    res
-      .status(200)
-      .json({ data: { message: `Message ${postId} successfuly deleted` } });
+    res.status(200).json({ message: `Message ${postId} successfuly deleted` });
   } catch (err) {
     next(err);
   }

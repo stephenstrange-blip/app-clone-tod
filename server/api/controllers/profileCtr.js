@@ -2,14 +2,13 @@ const { fetchProfile, addProfile, putProfile } = require("../db/database");
 const _ = require("lodash");
 
 exports.getProfile = async (req, res, next) => {
+  console.log("fetching profile....", req.user);
   try {
     const { id } = req.user;
+
     const profile = await fetchProfile({ userId: id });
-    res.status(200).json({
-      data: {
-        profile,
-      },
-    });
+    // res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+    res.status(200).json({ profile });
   } catch (err) {
     next(err);
   }
@@ -24,7 +23,7 @@ exports.createProfile = async (req, res, next) => {
     if (title) opts = { ...opts, title };
 
     await addProfile(opts);
-    res.status(200).json({ data: { message: "Profile Successfuly created!" } });
+    res.status(200).json({ message: "Profile Successfuly created!" });
   } catch (err) {
     next(err);
   }
@@ -41,12 +40,12 @@ exports.updateProfile = async (req, res, next) => {
     if (title) opts["title"] = title;
 
     if (_.isEmpty(opts))
-      return res.status(200).json({ data: { message: "Nothing to update" } });
+      return res.status(200).json({ message: "Nothing to update" });
 
     opts["userId"] = req.user.id;
 
     await putProfile(opts);
-    res.status(200).json({ data: { message: "Profile Successfuly updated!" } });
+    res.status(200).json({ message: "Profile Successfuly updated!" });
   } catch (err) {
     next(err);
   }
