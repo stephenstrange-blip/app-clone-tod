@@ -9,14 +9,20 @@ const { error } = require("../error");
 const postRouter = require("./post").router;
 const profileRouter = require("./profile").router;
 
-//TODO: IMPLEMENT CRUD for profile, and post, then start designing client
-router.use(
-  passport.authenticate("jwt", { session: false }),
-  async (req, res, next) => {
-    if (!req.user) return res.status(403).json({ data: "You shalt not pass" });
+
+router.use(function (req, res, next) {
+  passport.authenticate("jwt", { session: false }, (err, user, info) => {
+    if (err) return next(err);
+
+    // TODO: IMPLEMENT AN APPROPRIATE RESPONSE BECAUSE THE CURRENT ERROR IS 'BAD RESPONSE'
+    // WHEN IT SHOULD BE RELATED TO UNAUTHORIZED
+    if (!user) return next(new Error("User does not exist!"));
+
+    req.user = user;
     next();
-  }
-);
+    // req.login(user, next); -> no need to call this as jwt is not session-based and needs a de/serializer from passport local
+  })(req, res, next);
+});
 
 router.use("/profile", profileRouter);
 router.use("/posts", postRouter);

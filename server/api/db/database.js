@@ -87,7 +87,6 @@ async function fetchProfile({ userId }) {
       },
     },
   });
-  return;
 }
 
 async function addProfile(opts) {
