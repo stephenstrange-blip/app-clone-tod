@@ -4,3 +4,4 @@ node_modules
 generated/
 script.md
 prisma/
+seed.js

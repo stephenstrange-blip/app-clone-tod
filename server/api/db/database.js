@@ -65,6 +65,35 @@ async function addUser({
     });
 }
 
+async function deleteUser({ id }) {
+  return await prisma.user.delete({
+    where: {
+      id,
+    },
+    select: {
+      profile: {
+        select: {
+          firstName: true,
+          lastName: true,
+          bio: true,
+          title: true,
+        },
+      },
+    },
+  });
+}
+
+async function updateUser({ id, password }) {
+  return await prisma.user.update({
+    where: {
+      id,
+    },
+    data: {
+      password,
+    },
+  });
+}
+
 async function fetchProfile({ userId }) {
   return await prisma.profile.findUnique({
     where: {
@@ -266,4 +295,6 @@ module.exports = {
   deletePost,
   deleteNetwork,
   deleteRequest,
+  deleteUser,
+  updateUser,
 };
