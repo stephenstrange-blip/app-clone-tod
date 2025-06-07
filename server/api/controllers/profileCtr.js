@@ -7,7 +7,7 @@ exports.getProfile = async (req, res, next) => {
     const { id } = req.user;
 
     const profile = await fetchProfile({ userId: id });
-    // res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
     res.status(200).json({ profile });
   } catch (err) {
     next(err);
@@ -23,6 +23,7 @@ exports.createProfile = async (req, res, next) => {
     if (title) opts = { ...opts, title };
 
     await addProfile(opts);
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
     res.status(200).json({ message: "Profile Successfuly created!" });
   } catch (err) {
     next(err);
@@ -38,6 +39,8 @@ exports.updateProfile = async (req, res, next) => {
     if (lastName) opts["lastName"] = lastName;
     if (bio) opts["bio"] = bio;
     if (title) opts["title"] = title;
+
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 
     if (_.isEmpty(opts))
       return res.status(200).json({ message: "Nothing to update" });

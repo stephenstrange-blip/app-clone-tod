@@ -8,7 +8,7 @@ exports.signup = async (req, res, next) => {
     const hashed = await bcrypt.hash(password, 10);
     const result = await addUser({ username, password: hashed });
 
-    // res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 
     res.status(200).json({
       id: result.id,

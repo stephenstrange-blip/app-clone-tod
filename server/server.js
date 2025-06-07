@@ -50,9 +50,11 @@ app.use("/auth/github", routes.github);
 app.use("/users", routes.user);
 app.use("/logout", routes.logout);
 
-app.use("{*any}", (req, res) =>
-  res.status(403).json({ data: { message: "Page not found" } })
-);
+
+app.use("{*any}", (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+  res.status(403).json({ message: "Page not found" });
+});
 
 app.listen(8080, () =>
   console.log("Server Listening at http://localhost:8080")
