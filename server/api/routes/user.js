@@ -8,7 +8,8 @@ const { error } = require("../error");
 // posts, in this context, are user posts
 const postRouter = require("./post").router;
 const profileRouter = require("./profile").router;
-
+const requestRouter = require("./request").router;
+const networkRouter = require("./network").router;
 
 router.use(function (req, res, next) {
   passport.authenticate("jwt", { session: false }, (err, user, info) => {
@@ -26,6 +27,8 @@ router.use(function (req, res, next) {
 
 router.use("/profile", profileRouter);
 router.use("/posts", postRouter);
+router.use("/request", requestRouter);
+router.use("/network", networkRouter);
 router.use(error);
 
 module.exports = { router };

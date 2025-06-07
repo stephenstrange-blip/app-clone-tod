@@ -174,15 +174,96 @@ async function deletePost({ postId }) {
   });
 }
 
+// requester is the user currently logged in
+// and target is user being requested to follow
+async function addRequest({ targetId, requesterId }) {
+  return await prisma.followRequest.create({
+    data: {
+      targetId,
+      requesterId,
+    },
+  });
+}
+
+async function getRequest(opts, selectFields) {
+  return await prisma.followRequest.findMany({
+    where: opts,
+    select: selectFields || {
+      targetId: true, // currently logged in user's id
+      requester: {
+        select: {
+          firstName: true,
+          lastName: true,
+          userId: true,
+        },
+      },
+    },
+  });
+}
+
+async function deleteRequest({ targetId, requesterId }) {
+  return await prisma.followRequest.delete({
+    where: {
+      requestId: {
+        requesterId,
+        targetId,
+      },
+    },
+  });
+}
+
+async function addNetwork({ followingId, followerId }) {
+  return await prisma.userNetwork.create({
+    data: {
+      followingId,
+      followerId,
+    },
+    select: {
+      assignedAt: true,
+    },
+  });
+}
+
+async function getNetwork(opts, selectFields) {
+  return await prisma.userNetwork.findMany({
+    where: opts,
+    select: selectFields || {
+      follower: {
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+async function deleteNetwork({ followingId, followerId }) {
+  return await prisma.userNetwork.delete({
+    where: {
+      followerId_followingId: {
+        followerId,
+        followingId,
+      },
+    },
+  });
+}
+
 module.exports = {
   fetchCredentials,
   fetchUser,
   fetchProfile,
+  getRequest,
   getPost,
+  getNetwork,
   addUser,
   addPost,
   addProfile,
+  addRequest,
+  addNetwork,
   putProfile,
   putPost,
   deletePost,
+  deleteNetwork,
+  deleteRequest,
 };
