@@ -1,5 +1,12 @@
-const { getPost, putPost, addPost, deletePost } = require("../db/database");
+const {
+  getPost,
+  putPost,
+  addPost,
+  deletePost,
+  getManyPosts,
+} = require("../db/database");
 const _ = require("lodash");
+
 exports.fetchPost = async (req, res, next) => {
   try {
     const { postId } = req.params;
@@ -7,6 +14,25 @@ exports.fetchPost = async (req, res, next) => {
     const post = await getPost({ postId: Number(postId) });
     res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
     res.status(200).json({ post });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.fetchManyPost = async (req, res, next) => {
+  try {
+    const { start, end, published, myPosts, categoryId } = req.query;
+    let opts = {};
+
+    if (start) opts.start = start;
+    if (end) opts.end = end;
+    if (published) opts.published = published;
+    if (myPosts === "true") opts.authorId = req.user.id;
+    if (categoryId) opts.categoryId = categoryId;
+
+    const posts = await getManyPosts(opts, req.user.id);
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+    res.status(200).json(posts);
   } catch (err) {
     next(err);
   }
@@ -22,7 +48,7 @@ exports.createPost = async (req, res, next) => {
 
     const post = await addPost(opts);
     res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-    res.status(200).json({ post });
+    res.status(200).json(post);
   } catch (err) {
     next(err);
   }

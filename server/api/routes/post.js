@@ -6,8 +6,10 @@ const {
   removePost,
   updatePost,
   fetchPost,
+  fetchManyPost,
 } = require("../controllers/postCtr");
 
+router.get("/", fetchManyPost);
 router.get("/:postId", fetchPost);
 router.post("/", createPost);
 router.put("/:postId", updatePost);

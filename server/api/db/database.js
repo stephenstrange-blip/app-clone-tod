@@ -164,6 +164,40 @@ async function putPost(opts) {
   });
 }
 
+async function getManyPosts(opts, reactorId) {
+  return await prisma.post.findMany({
+    where: opts,
+    select: {
+      id: true,
+      title: true,
+      author: {
+        select: {
+          firstName: true,
+          lastName: true,
+        },
+      },
+      reactions: {
+        where: {
+          reactorId,
+        },
+        select: {
+          reactorId: true,
+          reactId: true,
+          id: true,
+        },
+      },
+      // message: true,
+      updatedAt: true,
+      _count: {
+        select: {
+          comments: true,
+          reactions: true,
+        },
+      },
+    },
+  });
+}
+
 async function getPost({ postId }) {
   return await prisma.post.findUnique({
     where: {
@@ -278,6 +312,24 @@ async function deleteNetwork({ followingId, followerId }) {
   });
 }
 
+async function addReaction({ postId, reactId, reactorId }) {
+  return await prisma.reactions.create({
+    data: {
+      reactId,
+      reactorId,
+      postId,
+    },
+  });
+}
+
+async function deleteReaction({ id_react }) {
+  return await prisma.reactions.delete({
+    where: {
+      id: id_react,
+    },
+  });
+}
+
 module.exports = {
   fetchCredentials,
   fetchUser,
@@ -285,16 +337,19 @@ module.exports = {
   getRequest,
   getPost,
   getNetwork,
+  getManyPosts,
   addUser,
   addPost,
   addProfile,
   addRequest,
   addNetwork,
+  addReaction,
   putProfile,
   putPost,
   deletePost,
   deleteNetwork,
   deleteRequest,
+  deleteReaction,
   deleteUser,
   updateUser,
 };
