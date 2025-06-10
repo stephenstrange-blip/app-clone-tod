@@ -198,7 +198,8 @@ async function getManyPosts(opts, reactorId) {
   });
 }
 
-async function getPost({ postId }) {
+async function getPost({ postId, reactorId }) {
+  console.log(reactorId);
   return await prisma.post.findUnique({
     where: {
       id: postId,
@@ -211,6 +212,22 @@ async function getPost({ postId }) {
       message: true,
       updatedAt: true,
       published: true,
+      author: {
+        select: {
+          lastName: true,
+          firstName: true,
+        },
+      },
+      reactions: {
+        where: {
+          reactorId,
+        },
+        select: {
+          reactorId: true,
+          reactId: true,
+          id: true,
+        },
+      },
       comments: {
         select: {
           id: true,
