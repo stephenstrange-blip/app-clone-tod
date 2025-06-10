@@ -11,7 +11,11 @@ exports.fetchPost = async (req, res, next) => {
   try {
     const { postId } = req.params;
 
-    const post = await getPost({ postId: Number(postId) });
+    const post = await getPost({
+      postId: Number(postId),
+      reactorId: req.user.id,
+    });
+    
     res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
     res.status(200).json({ post });
   } catch (err) {
