@@ -199,7 +199,6 @@ async function getManyPosts(opts, reactorId) {
 }
 
 async function getPost({ postId, reactorId }) {
-  console.log(reactorId);
   return await prisma.post.findUnique({
     where: {
       id: postId,
@@ -229,10 +228,14 @@ async function getPost({ postId, reactorId }) {
         },
       },
       comments: {
+        where: {
+          AND: [{ isDeleted: false }, { depth: 1 }],
+        },
         select: {
           id: true,
           depth: true,
           updatedAt: true,
+          numchild: true,
           message: true,
           author: {
             select: {
@@ -347,6 +350,80 @@ async function deleteReaction({ id_react }) {
   });
 }
 
+// for top comments to a post
+async function addComment({ message, postId, authorId }) {
+  return await prisma.comment.createRoot({
+    data: {
+      message,
+      postId,
+      authorId,
+    },
+  });
+}
+
+async function addReply({ message, commentId, authorId, postId }) {
+  return await prisma.comment.createChild({
+    where: {
+      id: commentId,
+    },
+    data: {
+      message,
+      authorId,
+      postId,
+    },
+  });
+}
+
+async function getReply({ commentId }) {
+  return await prisma.comment.findChildren({
+    where: {
+      id: commentId,
+    },
+    select: {
+      id: true,
+      isDeleted: true,
+      message: true,
+      updatedAt: true,
+      depth: true,
+      author: {
+        select: {
+          userId: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+}
+
+async function getComment({ commentId }) {
+  return await prisma.comment.findUnique({
+    where: {
+      id: commentId,
+    },
+    select: {
+      id: true,
+      isDeleted: true,
+      message: true,
+      numchild: true,
+      updatedAt: true,
+      depth: true,
+    },
+  });
+}
+
+// does not delete a comment, only marks it deleted
+async function deleteComment({ id, isDeleted }) {
+  return await prisma.comment.update({
+    where: {
+      id,
+    },
+    data: {
+      isDeleted,
+    },
+  });
+}
+
 module.exports = {
   fetchCredentials,
   fetchUser,
@@ -355,12 +432,16 @@ module.exports = {
   getPost,
   getNetwork,
   getManyPosts,
+  getComment,
+  getReply,
   addUser,
   addPost,
   addProfile,
   addRequest,
   addNetwork,
   addReaction,
+  addComment,
+  addReply,
   putProfile,
   putPost,
   deletePost,
@@ -368,5 +449,6 @@ module.exports = {
   deleteRequest,
   deleteReaction,
   deleteUser,
+  deleteComment,
   updateUser,
 };
