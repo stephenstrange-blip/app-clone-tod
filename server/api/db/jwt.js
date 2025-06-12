@@ -6,7 +6,7 @@ exports.signToken = async (req, res, next) => {
   const { username, id, githubId } = req.user;
   let opts;
 
-  if ((username && githubId) || (!username && githubId))
+  if ((username && githubId) || (!username && !githubId))
     return next(
       new Error(
         "Either githubId or username should only be provided. Aborting token generation..."
