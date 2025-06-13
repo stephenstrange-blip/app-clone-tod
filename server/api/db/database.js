@@ -1,27 +1,37 @@
 const prisma = require("./prisma").prisma;
 
-async function fetchUser({ id = null, githubId = null } = {}) {
-  if (id)
-    return await prisma.user.findUnique({
-      where: {
-        id,
-      },
+const SELECT = {
+  GITHUB: {
+    githubId: true,
+    id: true,
+  },
+  LOCAL: {
+    username: true,
+    id: true,
+  },
+  PROFILE: {
+    firstName: true,
+    lastName: true,
+    bio: true,
+    title: true,
+    userId: true,
+    _count: {
       select: {
-        username: true,
-        id: true,
+        followers: true,
+        following: true,
+        requests: true,
+        comments: true,
+        reaction: true,
       },
-    });
+    },
+  },
+};
 
-  if (githubId)
-    return await prisma.user.findUnique({
-      where: {
-        githubId,
-      },
-      select: {
-        githubId: true,
-        id: true,
-      },
-    });
+async function fetchUser(opts) {
+  return await prisma.user.findUnique({
+    where: opts,
+    select: opts.githubId ? SELECT.GITHUB : SELECT.LOCAL,
+  });
 }
 
 async function fetchCredentials({ username }) {
@@ -46,10 +56,7 @@ async function addUser({
       data: {
         githubId,
       },
-      select: {
-        githubId: true,
-        id: true,
-      },
+      select: SELECT.GITHUB,
     });
 
   if (username && password)
@@ -58,10 +65,7 @@ async function addUser({
         username,
         password,
       },
-      select: {
-        username: true,
-        id: true,
-      },
+      select: SELECT.LOCAL,
     });
 }
 
@@ -94,27 +98,12 @@ async function updateUser({ id, password }) {
   });
 }
 
-async function fetchProfile({ userId }) {
+async function getProfile({ userId }) {
   return await prisma.profile.findUnique({
     where: {
       userId,
     },
-    select: {
-      firstName: true,
-      lastName: true,
-      bio: true,
-      title: true,
-      userId: true,
-      _count: {
-        select: {
-          followers: true,
-          following: true,
-          requests: true,
-          comments: true,
-          reaction: true,
-        },
-      },
-    },
+    select: SELECT.PROFILE,
   });
 }
 
@@ -132,6 +121,7 @@ async function putProfile(opts) {
       userId,
     },
     data: otherOpts,
+    select: SELECT.PROFILE,
   });
 }
 
@@ -158,9 +148,6 @@ async function putPost(opts) {
       id: postId,
     },
     data: otherOpts,
-    omit: {
-      createdAt: true,
-    },
   });
 }
 
@@ -427,7 +414,7 @@ async function deleteComment({ id, isDeleted }) {
 module.exports = {
   fetchCredentials,
   fetchUser,
-  fetchProfile,
+  getProfile,
   getRequest,
   getPost,
   getNetwork,

@@ -1,5 +1,5 @@
 const {
-  getProfile,
+  fetchProfile,
   createProfile,
   updateProfile,
 } = require("../controllers/profileCtr");
@@ -7,7 +7,7 @@ const {
 const { Router } = require("express");
 const router = new Router();
 
-router.get("/", getProfile);
+router.get("/", fetchProfile);
 router.post("/", createProfile);
 router.put("/", updateProfile);
 
