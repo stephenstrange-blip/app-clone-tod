@@ -1,13 +1,17 @@
-const { fetchProfile, addProfile, putProfile } = require("../db/database");
+const { addProfile, putProfile, getProfile } = require("../db/database");
 const _ = require("lodash");
 
-exports.getProfile = async (req, res, next) => {
+exports.fetchProfile = async (req, res, next) => {
   console.log("fetching profile....", req.user);
   try {
     const { id } = req.user;
 
-    const profile = await fetchProfile({ userId: id });
+    const profile = await getProfile({ userId: id });
     res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+
+    const temp = profile._count.following;
+    profile._count.following = profile._count.followers;
+    profile._count.followers = temp;
     res.status(200).json({ profile });
   } catch (err) {
     next(err);
