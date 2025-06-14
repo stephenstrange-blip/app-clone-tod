@@ -1,0 +1,60 @@
+.profile_page {
+  height: 100%;
+  justify-content: flex-start;
+}
+
+.profile_header {
+  padding: 0.5rem;
+  width: 95%;
+  flex: .5
+}
+
+.profile_header > p {
+  width: 6rem;
+  height: 100%;
+}
+
+.profile_header > div {
+  align-items: flex-start;
+  padding-inline-start: 1.5rem;
+}
+
+.profile_main {
+  width: 70%;
+  margin-block-start: 3rem;
+}
+
+.profile_main > form {
+  height: 100%;
+  display: grid;
+  grid-template: 1.8fr .2fr / 1fr 1fr;
+  grid-template-areas: 'bio info' 'bio buttons';
+}
+
+.profile_main > form > div:nth-of-type(1) {
+  /* border: .5px solid blue; */
+  grid-area: info;
+  justify-content: flex-start;
+  gap: 5.5rem;
+}
+
+.profile_main > form > div:nth-of-type(2) {
+  /* border: .5px solid pink; */
+  grid-area: bio;
+}
+.profile_main > form > div:nth-of-type(3) {
+  /* border: .5px solid green; */
+  grid-area: buttons;
+}
+
+form textarea {
+  height: 100%;
+  background-color: transparent;
+  border: none;
+  padding-top: 1rem;
+  resize: none;
+}
+
+.profile_main > form input {
+  cursor: pointer;
+}

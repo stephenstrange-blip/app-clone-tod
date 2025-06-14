@@ -1,0 +1,58 @@
+.react:active > img {
+  filter: invert(91%) sepia(31%) saturate(120%) hue-rotate(126deg)
+    brightness(106%) contrast(102%);
+}
+
+span:hover > .reaction > .react {
+  display: revert;
+}
+
+.react.clicked {
+  filter: invert(19%) sepia(43%) saturate(2911%) hue-rotate(337deg)
+    brightness(110%) contrast(94%);
+}
+.react.disabled {
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+.comment_item {
+  padding: 0.3rem;
+  /* padding-left: 0; */
+  list-style-type: none;
+}
+
+.comment_item > p {
+  font-size: 14px;
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.comment_item > p:last-of-type {
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0.3rem 0.3rem 0.3rem 0;
+}
+
+.comment_item > p:last-of-type:hover {
+  opacity: revert;
+}
+
+.delete_comment {
+  padding: 0.5rem;
+  font-size: 24px;
+  padding-left: revert;
+  gap: 1.5rem;
+  justify-content: revert;
+}
+
+.delete_comment > p {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  display: none;
+}
+
+.comment_item:hover .delete_comment > p {
+  display: revert;
+}

@@ -1,0 +1,112 @@
+/* This stylesheet applies to Signin.jsx and Signup.jsx */
+
+.body_container {
+  width: 100%;
+  padding: 5rem;
+}
+.body_container > div {
+  min-width: 30%;
+}
+
+.alt-auth > span,
+button,
+input {
+  cursor: pointer;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-out;
+}
+
+form {
+  padding: 1rem;
+  /* margin-bottom: 1rem; */
+  width: 100%;
+}
+
+form[class*='sign'] h1 {
+  font-size: 25px;
+}
+form[class*='sign'] h2, form[class*='sign'] + h2 {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+form[class*='sign'] + h2 {
+  margin-bottom: 2rem;
+}
+
+form[class*='sign'] p {
+  padding: 1.5rem 0.5rem 5px 0;
+  gap: 0.2rem;
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.534);
+}
+
+form[class*='sign'] p input {
+  border: 0px;
+  padding-left: 0.5rem;
+  background-color: transparent;
+  width: 100%;
+}
+
+form[class*='sign'] p label {
+  padding-bottom: 4px;
+}
+
+form[class*='sign'] button {
+  margin-top: 2rem;
+  padding: 0.2rem;
+  border-radius: 5px;
+  border: none;
+}
+
+.alt-auth > span:hover,
+form button:hover,
+form input:hover,
+.button_cancel:hover {
+  background-color: rgb(117, 115, 112);
+}
+
+/* :active MUST come after :hover (if present) in the CSS definition in order to be effective! */
+form button:active {
+  background-color: #242424;
+}
+
+.alt-auth {
+  margin-top: 1rem;
+  gap: 1.5rem;
+}
+
+.alt-auth > span {
+  padding: 10px 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.322);
+  min-width: 150px;
+  text-align: center;
+}
+
+
+i {
+  font-size: 20px;
+}
+
+.continue {
+  position: relative; /* Required for absolute positioning of the line */
+  width: 100%;
+  text-align: center;
+}
+
+.continue::before {
+  content: ""; /* Required for pseudo-elements */
+  position: absolute;
+  top: 50%; /* Position the line in the middle of the div */
+  left: 1rem;
+  right: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.5); /* Adjust line style as needed */
+  transform: translateY(-50%); /* Correctly center the line vertically */
+}
+
+.continue > p {
+  padding: 0 1rem;
+  background-color: #242424;
+  width: fit-content;
+  position: relative;
+}
+

@@ -1,0 +1,88 @@
+.profile_section {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 1rem;
+}
+
+.info_container {
+  justify-content: space-between;
+  align-items: revert;
+}
+
+button {
+  margin: 1rem;
+  padding: 0.2rem 0.5rem;
+  min-width: fit-content;
+}
+
+.info_container {
+  gap: 2.5rem;
+}
+
+section[class*="section"] {
+  /* border: 0.5px solid red; */
+  min-width: 200px;
+  max-width: 500px;
+  padding: 0.5rem;
+}
+
+section[class*="section"] li {
+  list-style: none;
+}
+
+section[class*="section"] > h1 {
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-weight: 700;
+  text-align: center;
+  padding-bottom: 2rem;
+}
+
+.post_item {
+  padding: 2rem;
+  color: #acadad;
+}
+
+.post_item span {
+  gap: 1rem;
+}
+.post_item h3 {
+  font-size: 24px;
+  color: rgb(224, 224, 224);
+}
+.post_item > p {
+  font-size: 15px;
+}
+.post_item span > i {
+  font-size: 13px;
+}
+
+.button_cancel {
+  background-color: rgb(117, 115, 112);
+  padding: 0.3rem 0.6rem;
+  width: fit-content;
+  height: fit-content;
+  cursor: pointer;
+}
+.button_cancel:hover {
+  background-color: rgb(146, 143, 139);
+}
+
+.react {
+  display: none;
+  cursor: pointer;
+}
+.react:active > img {
+  filter: invert(91%) sepia(31%) saturate(120%) hue-rotate(126deg) brightness(106%) contrast(102%);
+}
+
+.post_section > ul > li:hover .react {
+  display: revert;
+}
+
+.clicked {
+  filter: invert(19%) sepia(43%) saturate(2911%) hue-rotate(337deg) brightness(110%) contrast(94%); 
+}
+.react.disabled {
+  pointer-events: none;
+  opacity: .4;
+}
