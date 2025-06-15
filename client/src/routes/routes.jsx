@@ -6,7 +6,7 @@ import ErrorPage from "../pages/Error";
 import Home, { loader as homeLoader } from "../pages/Home";
 import Root from "../pages/Root";
 import PostPage, { loader as postPageLoader, action as postAction } from "../pages/Post";
-import Profile, { loader as profileLoader } from "../pages/Profile";
+import Profile, { loader as profileLoader, action as profileAction } from "../pages/Profile";
 
 
 export const routes = createRoutesFromElements(
@@ -17,7 +17,7 @@ export const routes = createRoutesFromElements(
     <Route element={<Home />} path={"home"} loader={homeLoader} />
     <Route element={<Signin />} path={"signin"} action={signinAction} />
     <Route element={<Signup />} path={"signup"} action={signupAction} />
-    <Route element={<Profile />} path={"home/profile"} loader={profileLoader} />
+    <Route element={<Profile />} path={"home/profile"} loader={profileLoader} action={profileAction} />
     <Route element={<PostPage />} path={'home/:postId'} loader={postPageLoader} action={postAction} />
   </Route>
 )

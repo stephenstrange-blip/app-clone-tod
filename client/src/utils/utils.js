@@ -56,3 +56,5 @@ export const REGEX = {
   POSTID: new RegExp(/^[0-9]+$/),
 };
 export const FULFILLED = ["fulfilled", 200];
+
+export const PROFILE_KEYS = ["firstName", "lastName", "title", "bio"];

@@ -180,6 +180,11 @@ export const loadComment = async (input) => {
   );
 };
 
+
+export const updateProfile = async (input) => {
+  return apiClient.put("users/profile", input);
+};
+
 export const removeRequest = async (input) => {
   return apiClient.delete("users/request", {
     params: input,
