@@ -27,6 +27,16 @@ const SELECT = {
   },
 };
 
+const FILTER = {
+  BY_START_DATE: (date) => {
+    return {
+      createdAt: {
+        gte: date,
+      },
+    };
+  },
+};
+
 async function fetchUser(opts) {
   return await prisma.user.findUnique({
     where: opts,
@@ -177,7 +187,11 @@ async function getManyPosts(opts, reactorId) {
       updatedAt: true,
       _count: {
         select: {
-          comments: true,
+          comments: {
+            where: {
+              isDeleted: false,
+            },
+          },
           reactions: true,
         },
       },
@@ -241,6 +255,12 @@ async function deletePost({ postId }) {
     where: {
       id: postId,
     },
+  });
+}
+
+async function deleteManyPost(filter) {
+  return await prisma.post.deleteMany({
+    where: filter,
   });
 }
 
@@ -338,12 +358,13 @@ async function deleteReaction({ id_react }) {
 }
 
 // for top comments to a post
-async function addComment({ message, postId, authorId }) {
+async function addComment({ message, postId, authorId, createdAt }) {
   return await prisma.comment.createRoot({
     data: {
       message,
       postId,
       authorId,
+      createdAt,
     },
   });
 }
@@ -357,6 +378,9 @@ async function addReply({ message, commentId, authorId, postId }) {
       message,
       authorId,
       postId,
+      ignoreColumn: {
+        createdAt: true,
+      },
     },
   });
 }
@@ -369,6 +393,7 @@ async function getReply({ commentId }) {
     select: {
       id: true,
       isDeleted: true,
+      numchild: true,
       message: true,
       updatedAt: true,
       depth: true,
@@ -390,11 +415,12 @@ async function getComment({ commentId }) {
     },
     select: {
       id: true,
+      depth: true,
+      numchild: true,
       isDeleted: true,
       message: true,
-      numchild: true,
       updatedAt: true,
-      depth: true,
+      postId: true,
     },
   });
 }
@@ -408,6 +434,14 @@ async function deleteComment({ id, isDeleted }) {
     data: {
       isDeleted,
     },
+  });
+}
+
+// this is for actual item(s) removal from db
+async function deleteManyComment({ date }) {
+  if (!date) return;
+  return await prisma.comment.deleteMany({
+    where: FILTER.BY_START_DATE(date),
   });
 }
 
@@ -436,6 +470,8 @@ module.exports = {
   deleteRequest,
   deleteReaction,
   deleteUser,
+  deleteManyPost,
   deleteComment,
+  deleteManyComment,
   updateUser,
 };
