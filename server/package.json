@@ -8,7 +8,9 @@
   "main": "app.js",
   "scripts": {
     "test": "test",
-    "start": "npx prisma generate && nodemon --exec node --trace-warnings server.js"
+    "start": "npx prisma generate && nodemon --exec node --trace-warnings server.js",
+    "restart_count": "npx prisma migrate dev --create-only --name restart_autoincrement",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
     "@babel/core": "^7.27.1",
@@ -30,6 +32,7 @@
     "passport-github2": "^0.1.12",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "patch-package": "^8.0.0",
     "prisma": "^6.7.0",
     "prisma-extension-bark": "^0.2.2",
     "supertest": "^7.1.1"
