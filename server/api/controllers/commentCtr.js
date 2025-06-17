@@ -24,7 +24,6 @@ exports.createReply = async (req, res, next) => {
     };
     await addReply(opts);
 
-    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
     res.status(200).json({ message: "Reply successfully created" });
   } catch (err) {
     next(err);
@@ -42,7 +41,6 @@ exports.createComment = async (req, res, next) => {
     const opts = { postId: Number(postId), message, authorId: req.user.id };
     await addComment(opts);
 
-    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
     res.status(200).json({ message: "Comment successfully created" });
   } catch (err) {
     next(err);
@@ -66,7 +64,6 @@ exports.fetchComment = async (req, res, next) => {
       result = await getComment({ commentId: Number(commentId) });
     }
 
-    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
     res.status(200).json(result);
   } catch (err) {
     next(err);
@@ -79,7 +76,6 @@ exports.removeComment = async (req, res, next) => {
 
     await deleteComment({ id: Number(commentId), isDeleted: true });
 
-    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
     res.status(200).json({ message: "Comment successfully deleted" });
   } catch (err) {
     next(err);

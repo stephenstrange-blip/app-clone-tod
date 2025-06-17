@@ -32,7 +32,6 @@ exports.createRequest = async (req, res, next) => {
 
     await addRequest({ targetId: Number(targetId), requesterId: req.user.id });
 
-    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
     res.status(200).json({ message: "Request successfully created" });
   } catch (err) {
     next(err);
@@ -53,7 +52,6 @@ exports.removeRequest = async (req, res, next) => {
       requesterId: Number(requesterId),
     });
 
-    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
     res
       .status(200)
       .json({ message: "Request successfully deleted", targetId, requesterId });
@@ -85,7 +83,6 @@ exports.fetchRequest = async (req, res, next) => {
 
     const followRequests = await getRequest(opts, selectFields);
 
-    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
     res.status(200).json(followRequests);
   } catch (err) {
     next(err);

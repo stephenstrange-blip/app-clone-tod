@@ -17,7 +17,6 @@ exports.fetchPost = async (req, res, next) => {
       reactorId: req.user.id,
     });
 
-    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
     res.status(200).json({ post });
   } catch (err) {
     next(err);
@@ -36,7 +35,7 @@ exports.fetchManyPost = async (req, res, next) => {
     if (categoryId) opts.categoryId = categoryId;
 
     const posts = await getManyPosts(opts, req.user.id);
-    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
+
     res.status(200).json(posts);
   } catch (err) {
     next(err);
@@ -52,7 +51,7 @@ exports.createPost = async (req, res, next) => {
     if (categoryId) opts["categoryId"] = Number(categoryId);
 
     const post = await addPost(opts);
-    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
+
     res.status(200).json(post);
   } catch (err) {
     next(err);
@@ -68,8 +67,6 @@ exports.updatePost = async (req, res, next) => {
     if (title) opts["title"] = title;
     if (message) opts["message"] = message;
     if (published) opts["published"] = published === "true" ? true : false;
-
-    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
 
     if (_.isEmpty(opts))
       return res.status(200).json({ message: "Nothing to update" });
@@ -87,7 +84,7 @@ exports.removePost = async (req, res, next) => {
   try {
     const { postId } = req.params;
     await deletePost({ postId: Number(postId) });
-    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
+
     res.status(200).json({ message: `Message ${postId} successfuly deleted` });
   } catch (err) {
     next(err);

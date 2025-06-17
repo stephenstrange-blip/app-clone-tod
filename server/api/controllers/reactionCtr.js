@@ -19,7 +19,6 @@ exports.createReaction = async (req, res, next) => {
 
     await addReaction(opts);
 
-    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
     res.status(200).json({ message: "Successfully created" });
   } catch (err) {
     next(err);
@@ -36,7 +35,6 @@ exports.removeReaction = async (req, res, next) => {
     console.log(opts);
     await deleteReaction(opts);
 
-    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
     res.status(200).json({ message: "Successfully deleted" });
   } catch (err) {
     next(err);
