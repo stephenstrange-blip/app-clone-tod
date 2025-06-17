@@ -58,3 +58,11 @@ export const REGEX = {
 export const FULFILLED = ["fulfilled", 200];
 
 export const PROFILE_KEYS = ["firstName", "lastName", "title", "bio"];
+
+export function isValidForRetry(config, status) {
+  return (
+    config.retry < 4 &&
+    config.method !== "post" &&
+    (status >= 500 || RETRY_STATUS_CODES.includes(status))
+  );
+}

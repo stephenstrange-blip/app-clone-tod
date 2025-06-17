@@ -1,4 +1,5 @@
 import apiClient from "./client";
+import { isValidForRetry } from "../utils/utils";
 
 const URL = {
   TOKENLESS: ["auth/local", "signup", "auth/github", "auth/github/local"],
@@ -13,6 +14,8 @@ apiClient.interceptors.request.use(
 
     // Skip token attachment for public/tokenless routes
     if (URL.TOKENLESS.includes(config.url)) return config;
+
+    console.log("checking for token...");
 
     const token = localStorage.getItem("token");
     if (!token) throw new Error("Token not found!");
@@ -32,7 +35,6 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     let message;
-    console.log(error)
     if (error.message === "canceled")
       return Promise.resolve(
         "Canceled Request due likely to mounting and unmounting in react development"
@@ -41,11 +43,10 @@ apiClient.interceptors.response.use(
     const config = error.config;
 
     if (isValidForRetry(config, error.status)) {
-      
       const retry_delay = Math.pow(2, config.retry) * 1000;
 
       config.retry += 1;
-      console.log('Retrying request: ', config.retry)
+      console.log("Retrying request: ", config.retry);
       await new Promise((resolve) => setTimeout(resolve, retry_delay));
       return apiClient(config);
     }
@@ -62,13 +63,7 @@ apiClient.interceptors.response.use(
   }
 );
 
-function isValidForRetry(config, status) {
-  return (
-    config.retry < 4 &&
-    config.method !== "post" &&
-    (status >= 500 || RETRY_STATUS_CODES.includes(status))
-  );
-}
+
 
 export const signup = async (input) => {
   return apiClient.post("signup", input, {
