@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const { addUser } = require("../db/database");
+require("dotenv").config();
 
 // ---------------------- Local (signup) STRATEGY ------------------------//
 exports.signup = async (req, res, next) => {
@@ -8,7 +9,7 @@ exports.signup = async (req, res, next) => {
     const hashed = await bcrypt.hash(password, 10);
     const result = await addUser({ username, password: hashed });
 
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
 
     res.status(200).json({
       id: result.id,

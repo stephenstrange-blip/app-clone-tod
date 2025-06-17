@@ -1,5 +1,6 @@
 const { addProfile, putProfile, getProfile } = require("../db/database");
 const _ = require("lodash");
+require("dotenv").config();
 
 exports.fetchProfile = async (req, res, next) => {
   console.log("fetching profile....", req.user);
@@ -7,7 +8,7 @@ exports.fetchProfile = async (req, res, next) => {
     const { id } = req.user;
 
     const profile = await getProfile({ userId: id });
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
 
     const temp = profile._count.following;
     profile._count.following = profile._count.followers;
@@ -27,7 +28,7 @@ exports.createProfile = async (req, res, next) => {
     if (title) opts = { ...opts, title };
 
     await addProfile(opts);
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
     res.status(200).json({ message: "Profile Successfuly created!" });
   } catch (err) {
     next(err);
@@ -44,7 +45,7 @@ exports.updateProfile = async (req, res, next) => {
     if (bio) opts["bio"] = bio;
     if (title) opts["title"] = title;
 
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
 
     if (_.isEmpty(opts))
       return res.status(200).json({ message: "Nothing to update" });

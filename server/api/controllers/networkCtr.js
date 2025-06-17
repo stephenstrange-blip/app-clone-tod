@@ -1,5 +1,6 @@
 const { getNetwork, addNetwork, deleteNetwork } = require("../db/database");
 const _ = require("lodash");
+require("dotenv").config();
 const fields = {
   select: {
     firstName: true,
@@ -32,7 +33,7 @@ exports.fetchNetwork = async (req, res, next) => {
 
     const result = await getNetwork(opts, selectFields);
 
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
     res.status(200).json(result);
   } catch (err) {
     next(err);
@@ -51,7 +52,7 @@ exports.createNetwork = async (req, res, next) => {
       followingId: req.user.id,
     });
 
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
     res
       .status(200)
       .json({ message: "Successfuly added a network", assignedAt });
@@ -72,7 +73,7 @@ exports.removeNetwork = async (req, res, next) => {
       followingId: Number(followingId),
     });
 
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+    res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
     res.status(200).json({ message: "Successfuly removed a network" });
   } catch (err) {
     next(err);
