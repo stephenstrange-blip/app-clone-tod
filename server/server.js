@@ -34,11 +34,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(passport.session());
 
-app.options("{*any}", cors({ origin: true }), (req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
-  next();
-});
-// app.options("{*any}", cors({ origin: "*" }));
+app.use(cors({ origin: process.env.FRONTEND_URL }));
 
 app.use("/signup", routes.signup);
 app.use("/auth/local", routes.login);
@@ -47,7 +43,6 @@ app.use("/users", routes.user);
 app.use("/logout", routes.logout);
 
 app.use("{*any}", (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
   res.status(403).json({ message: "Page not found" });
 });
 
