@@ -2,7 +2,12 @@ import apiClient from "./client";
 import { isValidForRetry } from "../utils/utils";
 
 const URL = {
-  TOKENLESS: ["auth/local", "signup", "auth/github", "auth/github/local"],
+  TOKENLESS: [
+    "/api/auth/local",
+    "/api/signup",
+    "/api/auth/github",
+    "/api/auth/github/local",
+  ],
 };
 
 const RETRY_STATUS_CODES = [408, 429];
@@ -73,21 +78,21 @@ export const signup = async (input) => {
 };
 
 export const login = async (input) => {
-  return apiClient.post("auth/local", input, {
+  return apiClient.post("/api/auth/local", input, {
     signal: AbortSignal.timeout(8000),
     timeout: 5000,
   });
 };
 
 export const createRequest = async (input) => {
-  return apiClient.post("users/request", input, {
+  return apiClient.post("/api/users/request", input, {
     signal: AbortSignal.timeout(8000),
     timeout: 5000,
   });
 };
 
 export const createNetwork = async (input) => {
-  return apiClient.post("users/network", input, {
+  return apiClient.post("/api/users/network", input, {
     signal: AbortSignal.timeout(8000),
     timeout: 5000,
   });
@@ -95,14 +100,14 @@ export const createNetwork = async (input) => {
 
 export const createPost = async (input) => {
   console.dir(input);
-  return apiClient.post("users/posts", input, {
+  return apiClient.post("/api/users/posts", input, {
     signal: AbortSignal.timeout(8000),
     timeout: 5000,
   });
 };
 
 export const createReaction = async (input) => {
-  return apiClient.post("users/reaction", input, {
+  return apiClient.post("/api/users/reaction", input, {
     signal: AbortSignal.timeout(8000),
     timeout: 5000,
   });
@@ -110,7 +115,7 @@ export const createReaction = async (input) => {
 
 export const createComment = async (input) => {
   return apiClient.post(
-    `users/posts/${input.postId}`,
+    `/api/users/posts/${input.postId}`,
     { message: input.message },
     { signal: AbortSignal.timeout(8000), timeout: 5000 }
   );
@@ -118,21 +123,21 @@ export const createComment = async (input) => {
 
 export const createReply = async (input) => {
   return apiClient.post(
-    `users/posts/${input.postId}/comments/${input.commentId}`,
+    `/api/users/posts/${input.postId}/comments/${input.commentId}`,
     { message: input.message },
     { signal: AbortSignal.timeout(8000), timeout: 5000 }
   );
 };
 
 export const loadProfile = async () => {
-  return apiClient.get("users/profile", {
+  return apiClient.get("/api/users/profile", {
     signal: AbortSignal.timeout(8000),
     timeout: 5000,
   });
 };
 
 export const loadRequest = async (input) => {
-  return apiClient.get("users/request", {
+  return apiClient.get("/api/users/request", {
     params: input,
     signal: AbortSignal.timeout(8000),
     timeout: 5000,
@@ -140,7 +145,7 @@ export const loadRequest = async (input) => {
 };
 
 export const loadNetwork = async (input) => {
-  return apiClient.get("users/network", {
+  return apiClient.get("/api/users/network", {
     params: input,
     signal: AbortSignal.timeout(8000),
     timeout: 5000,
@@ -148,7 +153,7 @@ export const loadNetwork = async (input) => {
 };
 
 export const loadManyPost = async (input) => {
-  return apiClient.get("users/posts", {
+  return apiClient.get("/api/users/posts", {
     params: input,
     signal: AbortSignal.timeout(8000),
     timeout: 5000,
@@ -156,7 +161,7 @@ export const loadManyPost = async (input) => {
 };
 
 export const loadPost = async (postId) => {
-  return apiClient.get(`users/posts/${postId}`, {
+  return apiClient.get(`/api/users/posts/${postId}`, {
     signal: AbortSignal.timeout(8000),
     timeout: 5000,
   });
@@ -164,7 +169,7 @@ export const loadPost = async (postId) => {
 
 export const loadComment = async (input) => {
   return apiClient.get(
-    `users/posts/${input.postId}/comments/${input.commentId}`,
+    `/api/users/posts/${input.postId}/comments/${input.commentId}`,
     {
       params: {
         getReplies: input.getReplies,
@@ -175,13 +180,12 @@ export const loadComment = async (input) => {
   );
 };
 
-
 export const updateProfile = async (input) => {
-  return apiClient.put("users/profile", input);
+  return apiClient.put("/api/users/profile", input);
 };
 
 export const removeRequest = async (input) => {
-  return apiClient.delete("users/request", {
+  return apiClient.delete("/api/users/request", {
     params: input,
     signal: AbortSignal.timeout(8000),
     timeout: 5000,
@@ -189,7 +193,7 @@ export const removeRequest = async (input) => {
 };
 
 export const removeReaction = async (input) => {
-  return apiClient.delete("users/reaction", {
+  return apiClient.delete("/api/users/reaction", {
     params: input,
     signal: AbortSignal.timeout(8000),
     timeout: 5000,
@@ -198,7 +202,7 @@ export const removeReaction = async (input) => {
 
 export const removeComment = async (input) => {
   return apiClient.delete(
-    `users/posts/${input.postId}/comments/${input.commentId}`,
+    `/api/users/posts/${input.postId}/comments/${input.commentId}`,
     { signal: AbortSignal.timeout(8000), timeout: 5000 }
   );
 };
