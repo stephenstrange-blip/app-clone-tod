@@ -10,12 +10,12 @@ import { CreateCommentForm } from './components/Form';
 
 
 function PostPage() {
-
   if (!localStorage.getItem("token")) {
     location.replace('/signin')
   }
 
   const { post } = useLoaderData();
+
 
   if (!post || typeof post !== 'object') return <></>
 
@@ -52,6 +52,7 @@ function PostPage() {
 export async function loader({ params }) {
   const { postId } = params;
 
+  // deter invalid params (i.e. /home/123-abc)
   if (!REGEX.POSTID.test(postId)) {
     return redirectDocument('/home')
   }

@@ -1,4 +1,4 @@
-import { Form, useLoaderData, useFetcher } from "react-router-dom";
+import { Form, useLoaderData, useFetcher, Link } from "react-router-dom";
 import { loadProfile, updateProfile } from "../api/operations";
 import { FULFILLED, PROFILE_KEYS } from "../utils/utils";
 import { useRef, useState } from "react";
@@ -92,6 +92,9 @@ function Profile() {
             <p>{`${profile.firstName} ${profile.lastName}`}</p>
             <p>{profile.title}</p>
           </div>
+          <Link to={'/home'}>
+            <button>Home</button>
+          </Link>
         </header>
         <main className="profile_main">
           {/* TODO: Make an operation for updating profile */}
