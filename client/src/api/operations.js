@@ -65,9 +65,11 @@ apiClient.interceptors.response.use(
     if (error.response) {
       console.error("Api Failed:", error.response?.data?.stack);
       message = error.response?.data?.message;
-    } else {
+    } else if (error.message) {
       console.error("Api Failed:", error);
       message = error.message;
+    } else {
+      message = error;
     }
 
     return Promise.reject(message);
