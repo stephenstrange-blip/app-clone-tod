@@ -1,7 +1,9 @@
 import axios from "axios";
+require("dotenv").config();
+
 const apiClient = axios.create({
-  // baseURL: "http://localhost:8080",
-  // httpsAgent: true,
+  baseURL: process.env.BASE_SERVER_URL,
+  httpAgent: false,
   // httpsAgent: false,
   headers: {
     "Content-Type": "application/json",
