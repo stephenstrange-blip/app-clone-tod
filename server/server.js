@@ -46,6 +46,4 @@ app.use("{*any}", (req, res) => {
   res.status(403).json({ message: "Page not found" });
 });
 
-app.listen(8080, () =>
-  console.log("Server Listening at http://localhost:8080")
-);
+app.listen(8080);
