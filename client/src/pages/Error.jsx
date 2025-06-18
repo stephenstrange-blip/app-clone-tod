@@ -2,7 +2,7 @@ import { useRouteError } from "react-router-dom";
 
 export default function ErrorPage() {
   const error = useRouteError();
-  console.log(error)
+
   const errorMsg = error.data ? error.data : (error.message ? error.message : (error ? error : 'Something Unexpected happended'));
 
   return (
@@ -29,5 +29,6 @@ export function fallBackRender({ error, resetErrorBoundary }) {
 
 export function logError(error, info) {
   // Do something with the error, e.g. log to an external API
-  console.log('Error: ', error, "Info: ", info)
+  console.log('Error: ', error)
+  console.log("Info: ", info)
 };
