@@ -14,8 +14,12 @@ export default defineConfig(({ command, mode, isPreview, isSsrBuild }) => {
   if (command === "build") {
     return {
       plugins: [react()],
+      build: {
+        assetsInlineLimit: 0,
+      },
       server: {
         port: 5175,
+        strictPort: true,
       },
     };
   }
@@ -25,6 +29,7 @@ export default defineConfig(({ command, mode, isPreview, isSsrBuild }) => {
       plugins: [react()],
       server: {
         port: 5172,
+        strictPort: true,
         proxy: {
           "/api": {
             target: "http://localhost:8080",
