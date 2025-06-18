@@ -1,8 +1,11 @@
 import axios from "axios";
-require("dotenv").config();
+// require("dotenv").config();
+const env = import.meta.env;
 
 const apiClient = axios.create({
-  baseURL: process.env.BASE_SERVER_URL,
+  baseURL: env?.RAILWAY_PUBLIC_DOMAIN
+    ? import.meta.env.BASE_SERVER_URL
+    : "/api",
   httpAgent: false,
   // httpsAgent: false,
   headers: {
