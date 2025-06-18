@@ -10,6 +10,10 @@ import { fallBackRender, logError } from './pages/Error'
 
 const router = createBrowserRouter(routes)
 
+window.addEventListener('vite:preloadError', (event) => {
+  window.location.reload() // for example, refresh the page
+})
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ErrorBoundary fallbackRender={fallBackRender} onError={logError}>
