@@ -17,10 +17,6 @@ export default defineConfig(({ command, mode, isPreview, isSsrBuild }) => {
       build: {
         assetsInlineLimit: 0,
       },
-      server: {
-        port: 5175,
-        strictPort: true,
-      },
     };
   }
 
