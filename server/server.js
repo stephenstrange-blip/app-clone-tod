@@ -34,9 +34,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(passport.session());
 
-app.use(
-  cors({ origin: [process.env.FRONTEND_URL, /app-clone-tod\.netlify\.app$/] })
-);
+app.use(cors({ origin: /app-clone-tod\.netlify\.app$/ }));
 
 app.use("/signup", routes.signup);
 app.use("/auth/local", routes.login);
