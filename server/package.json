@@ -8,7 +8,7 @@
   "main": "app.js",
   "scripts": {
     "test": "test",
-    "start": "npx prisma generate && nodemon --exec node --trace-warnings server.js",
+    "start": "npx prisma migrate dev --name init && prisma generate && node seedDb.js && nodemon --exec node --trace-warnings server.js",
     "restart_count": "npx prisma migrate dev --create-only --name restart_autoincrement",
     "postinstall": "patch-package"
   },
