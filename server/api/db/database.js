@@ -445,6 +445,20 @@ async function deleteManyComment({ date }) {
   });
 }
 
+async function addCategory({ name }) {
+  return await prisma.category.create({
+    data: {
+      name,
+    },
+  });
+}
+
+async function addReacts({ data }) {
+  return await prisma.reacts.createMany({
+    data,
+    skipDuplicates: true,
+  });
+}
 module.exports = {
   fetchCredentials,
   fetchUser,
@@ -463,6 +477,8 @@ module.exports = {
   addReaction,
   addComment,
   addReply,
+  addCategory,
+  addReacts,
   putProfile,
   putPost,
   deletePost,
