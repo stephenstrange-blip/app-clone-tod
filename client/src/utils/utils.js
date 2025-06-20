@@ -59,6 +59,8 @@ export const FULFILLED = ["fulfilled", 200];
 
 export const PROFILE_KEYS = ["firstName", "lastName", "title", "bio"];
 
+const RETRY_STATUS_CODES = [408, 429];
+
 export function isValidForRetry(config, status) {
   return (
     config.retry < 4 &&

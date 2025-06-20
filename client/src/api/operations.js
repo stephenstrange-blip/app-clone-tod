@@ -14,8 +14,6 @@ const URL = {
   ],
 };
 
-const RETRY_STATUS_CODES = [408, 429];
-
 apiClient.interceptors.request.use(
   (config) => {
     // // for retries
