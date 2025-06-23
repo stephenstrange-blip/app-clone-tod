@@ -110,3 +110,7 @@ i {
   position: relative;
 }
 
+.alt-auth > span:last-of-type {
+  cursor: not-allowed;
+}
+
