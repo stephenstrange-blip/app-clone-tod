@@ -1,9 +1,7 @@
 import { Outlet } from "react-router-dom"
 
-function Root() {
+export default function Root() {
   return (
     <Outlet />
   )
 }
-
-export default Root
