@@ -9,6 +9,8 @@ exports.fetchProfile = async (req, res, next) => {
 
     const profile = await getProfile({ userId: id });
 
+    if (!profile) return next(new Error("No profile is set for current user"));
+
     const temp = profile._count.following;
     profile._count.following = profile._count.followers;
     profile._count.followers = temp;
