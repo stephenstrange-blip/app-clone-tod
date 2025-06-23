@@ -13,7 +13,6 @@ router.get(
   "/",
   passport.authenticate("github", {
     scope: ["user:email"],
-    state: process.env.AUTH_STATE,
   })
 );
 
@@ -22,14 +21,19 @@ router.get(
   (req, res, next) => {
     passport.authenticate(
       "github",
-      { failWithError: true },
+      { failureRedirect: process.env.FRONTEND_URL + "/signin" },
       (err, user, info) => {
-        console.dir("err: ", err, "user: ", user, "info: ", info);
         if (err) return next(err);
         if (!user) return next(new Error("No user found!"));
 
-        // NEED TO CALL req.login()!!!
-        req.login(user, next);
+        // // NEED TO CALL req.login()!!!
+        // req.login(user, (err) => {
+        //   if (err) return next(err);
+        //   next(); // move to signToken
+        // });
+        console.log("User found. Setting req.user to user");
+        req.user = user;
+        next();
       }
     )(req, res, next);
   },
