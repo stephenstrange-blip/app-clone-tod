@@ -26,19 +26,35 @@ const GITHUB = {
 // ---------------------- JWT STRATEGY ------------------------//
 
 const opts = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  // jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  jwtFromRequest: function (req) {
+    if (req && req.signedCookies) {
+      console.log(req.signedCookies?.token ? "Token found" : "No token found");
+      return req.signedCookies?.token;
+    }
+    console.log("No signed cookies found. Returning null");
+    return null;
+  },
   secretOrKey: process.env.JWT_SECRET,
-  audience: "http://localhost:8080",
-  issuer: "http://localhost:8080",
+  audience: process.env.FRONTENT_URL,
+  issuer: process.env.BASE_SERVER_URL,
   algorithms: ["HS256"],
   ignoreExpiration: true,
 };
 
 passport.use(
   new JWTStrategy(opts, async (payload, done) => {
+    let user;
     try {
-      const user = await fetchUser({ id: payload.id });
-      if (!user) done(null, false, ERROR.INVALID_TOKEN);
+      if (payload.githubId) {
+        console.log("verifying github signup");
+        user = await fetchUser({ id: payload.id, githubId: payload.githubId });
+      } else {
+        console.log("verifying local signup ");
+        user = await fetchUser({ id: payload.id });
+      }
+
+      if (!user) done(ERROR.INVALID_TOKEN, false);
 
       done(null, user);
     } catch (err) {
@@ -78,27 +94,41 @@ passport.use(
     {
       clientID: GITHUB.CLIENT_ID,
       clientSecret: GITHUB.CLIENT_SECRET,
-      callbackURL: "http://127.0.0.1:8080/auth/github/callback",
+      callbackURL: `${process.env.BASE_SERVER_URL}/auth/github/callback`,
+      state: false,
+      passReqToCallback: true,
     },
-    async function (accessToken, refreshToken, profile, done) {
-      try {
-        console.dir("Github profile:", profile);
-        console.log("AccessToken: ", accessToken);
-        console.log("RefreshToken: ", refreshToken);
+    function (req, accessToken, refreshToken, profile, done) {
+      (async () => {
+        try {
+          console.log(process.env.NODE_ENV);
+          if (process.env.NODE_ENV === "development") {
+            console.log(
+              `Access token: ${accessToken}, Refresh token: ${refreshToken}`
+            );
+            console.log("Github profile:", profile);
+          }
 
-        if (!profile.id) return done(new Error("github ID is missing!"), false);
+          if (!profile?.id)
+            return done(new Error("github ID is missing!"), false);
 
-        let user = await fetchUser({ githubId: profile.id });
+          let user = await fetchUser({ githubId: Number(profile.id) });
 
-        // add to database for first time logins using github account
-        if (_.isEmpty(user)) user = await addUser({ githubId: profile.id });
+          // TODO: Update the app profile of the user with github profile
+          // add to database for first time logins using github account
+          if (!user || _.isEmpty(user)) {
+            console.log("Adding new github user to database...");
+            user = await addUser({ githubId: Number(profile.id) });
+          }
 
-        // user = { githubId: Int, id: Int}
-        done(null, user);
-      } catch (err) {
-        await prisma.$disconnect();
-        done(err, false);
-      }
+          // user => { githubId: Int, id: Int}
+          done(null, user);
+        } catch (err) {
+          console.error(err);
+          prisma.$disconnect().catch((error) => console.error(error));
+          done(err, false);
+        }
+      })();
     }
   )
 );
