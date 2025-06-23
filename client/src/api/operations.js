@@ -1,33 +1,12 @@
 import apiClient from "./client";
 import { isValidForRetry } from "../utils/utils";
 
-const URL = {
-  TOKENLESS: [
-    "/api/auth/local",
-    "/api/signup",
-    "/api/auth/github",
-    "/api/auth/github/local",
-    "/auth/local",
-    "/signup",
-    "/auth/github",
-    "/auth/github/local",
-  ],
-};
+
 
 apiClient.interceptors.request.use(
   (config) => {
     // // for retries
     config.retry = config.retry ?? 0;
-
-    // Skip token attachment for public/tokenless routes
-    if (URL.TOKENLESS.includes(config.url)) return config;
-
-    console.log("checking for token...");
-
-    const token = localStorage.getItem("token");
-    if (!token) throw new Error("Token not found!");
-
-    config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
   (error) => {
@@ -41,15 +20,15 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
-    let message;
+    let message,
+      config = error.config;
 
-    if (error.message === "canceled") {
-      return Promise.reject(
-        "Canceled Request due likely to mounting and unmounting in react development"
+    if (error.status === 401) {
+      console.log(
+        `${error.response.data?.message}. Redirecting to signin page`
       );
+      return Promise.resolve({ data: { authenticated: false } });
     }
-
-    const config = error.config;
 
     if (isValidForRetry(config, error.status)) {
       const retry_delay = Math.pow(2, config.retry) * 1000;
@@ -61,8 +40,8 @@ apiClient.interceptors.response.use(
       return apiClient(config);
     }
 
-    if (error.response?.data?.stack) {
-      console.error("Api Failed:", error.response?.data?.stack);
+    if (error.response?.data?.message) {
+      console.error("Api Failed:", error.response?.data?.message);
       message = error.response.data.message;
     } else if (error.message) {
       console.error("Api Failed:", error.message);
@@ -88,6 +67,27 @@ export const signup = async (input) => {
 
 export const login = async (input) => {
   return apiClient.post("/auth/local", input, {
+    signal: AbortSignal.timeout(8000),
+    timeout: 8000,
+  });
+};
+
+export const authGitHub = async () => {
+  return apiClient.get("/auth/github", {
+    signal: AbortSignal.timeout(8000),
+    timeout: 8000,
+  });
+};
+
+export const authMe = async () => {
+  return apiClient.get("/users/auth/me", {
+    signal: AbortSignal.timeout(8000),
+    timeout: 8000,
+  });
+};
+
+export const logMeOut = async () => {
+  return apiClient.post("/logout", undefined, {
     signal: AbortSignal.timeout(8000),
     timeout: 8000,
   });
