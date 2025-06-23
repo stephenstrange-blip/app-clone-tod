@@ -58,7 +58,7 @@ passport.use(
 
       done(null, user);
     } catch (err) {
-      await prisma.$disconnect();
+      prisma.$disconnect().catch((error) => console.error(error));
       done(err, false);
     }
   })
@@ -77,11 +77,10 @@ passport.use(
       const match = await bcrypt.compare(password, user.password);
       if (!match) return done(new Error(ERROR.INVALID_INPUT), false);
 
-      await prisma.$disconnect();
       // pass username and id for jwt signing
       done(null, { username, id: user.id });
     } catch (err) {
-      await prisma.$disconnect();
+      prisma.$disconnect().catch((error) => console.error(error));
       done(err, false);
     }
   })
@@ -101,7 +100,6 @@ passport.use(
     function (req, accessToken, refreshToken, profile, done) {
       (async () => {
         try {
-          console.log(process.env.NODE_ENV);
           if (process.env.NODE_ENV === "development") {
             console.log(
               `Access token: ${accessToken}, Refresh token: ${refreshToken}`
