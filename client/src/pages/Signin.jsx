@@ -4,19 +4,11 @@ import lockIcon from '../assets/lock.svg'
 import personIcon from '../assets/person.svg'
 
 import { CustomForm } from "./components/Form";
-import { Link, redirectDocument, useNavigate } from "react-router-dom";
-import { login } from "../api/operations";
-import { useEffect } from "react";
+import { Link, redirectDocument } from "react-router-dom";
+import { login, authMe } from "../api/operations";
 
 
 function Signin() {
-  const nav = useNavigate()
-
-  useEffect(() => {
-    if (!!localStorage.getItem("token"))
-      nav('/home')
-  }, [])
-
   return (
     <div className="body_container flex flex-center">
       <LoginForm></LoginForm>
@@ -25,6 +17,14 @@ function Signin() {
 }
 
 function LoginForm() {
+  const handleGithubAuth = async () => {
+    try {
+      // cannot use AXIOS or any fetch API as those don't respect CORS headers on redirects
+      window.location.href = import.meta.env.VITE_BASE_SERVER_URL + '/auth/github'
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   return (
     <div className="flex flex-center flex-col">
@@ -41,7 +41,7 @@ function LoginForm() {
       </span>
 
       <div className="alt-auth flex flex-row">
-        <span>
+        <span onClick={handleGithubAuth}>
           <i className="devicon-github-original"></i>
         </span>
         <span>
@@ -52,22 +52,19 @@ function LoginForm() {
   )
 }
 
-export async function action({ request }) {
+export async function loader() {
+  const status = await authMe();
 
+  if (status.data.authenticated) return redirectDocument("/home")
+}
+
+export async function action({ request }) {
   const formData = await request.formData()
   const input = { username: formData.get('username'), password: formData.get('password') }
 
   const response = await login(input);
-  console.log('response', response);
-
+  
   if (!response) return redirectDocument("/signin")
-
-  if (response?.data?.token) {
-    localStorage.setItem('token', response.data.token)
-    console.log('redirecting...')
-    return redirectDocument('/home')
-  }
-
 }
 
 export default Signin;
