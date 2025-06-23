@@ -25,7 +25,7 @@ function Reaction({ reactorId, postId, reactId, id_react }) {
     }
 
     // clicking a previously clicked react removes the reaction
-    if (react) {
+    if (react && isClicked) {
       result = await removeReaction({ id_react })
     }
 
