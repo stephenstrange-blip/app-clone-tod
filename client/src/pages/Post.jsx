@@ -1,5 +1,5 @@
 import { useLoaderData, Form, Link, redirectDocument } from "react-router-dom";
-import { createComment, createReply, loadPost, removeComment } from "../api/operations";
+import { createComment, createReply, loadPost, removeComment, authMe } from "../api/operations";
 import { formatDate, REGEX } from "../utils/utils";
 
 import './styles/post.css'
@@ -7,15 +7,8 @@ import Reaction from "./components/Reaction";
 import CommentItem from "./components/CommentItem";
 import { CreateCommentForm } from './components/Form';
 
-
-
 function PostPage() {
-  if (!localStorage.getItem("token")) {
-    location.replace('/signin')
-  }
-
-  const { post } = useLoaderData();
-
+  const { post } = useLoaderData() || { posts: {} };
 
   if (!post || typeof post !== 'object') return <></>
 
@@ -50,6 +43,10 @@ function PostPage() {
 }
 
 export async function loader({ params }) {
+  const status = await authMe();
+
+  if (!status.data.authenticated) return redirectDocument("/signin")
+
   const { postId } = params;
 
   // deter invalid params (i.e. /home/123-abc)
@@ -64,8 +61,6 @@ export async function loader({ params }) {
 export async function action({ request }) {
   const formData = await request.formData();
   const intent = formData.get('intent')
-
-  console.log(intent)
 
   if (intent === 'createComment')
     await createComment({

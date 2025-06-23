@@ -1,5 +1,5 @@
-import { Form, useLoaderData, useFetcher, Link } from "react-router-dom";
-import { loadProfile, updateProfile } from "../api/operations";
+import { useLoaderData, useFetcher, Link, redirectDocument } from "react-router-dom";
+import { loadProfile, updateProfile, authMe } from "../api/operations";
 import { FULFILLED, PROFILE_KEYS } from "../utils/utils";
 import { useRef, useState } from "react";
 
@@ -9,40 +9,16 @@ import './styles/profile.css'
 // const windowHeight = document.documentElement.clientHeight;
 const windowHeight = window.innerHeight
 
-export async function loader() {
-  const profile = await loadProfile();
-  return { profile }
-}
-
-export async function action({ request }) {
-  let input = {}
-  const formData = await request.formData();
-
-  const currentProfile = JSON.parse(formData.get("profile"))
-
-  for (let key of PROFILE_KEYS) {
-    let newValue = formData.get(key);
-
-    // Only update new profile values to server
-    if (currentProfile[key] !== newValue)
-      input[key] = newValue;
-  }
-
-  await updateProfile(input);
-  return
-}
-
 function Profile() {
-  if (!localStorage.getItem("token")) {
-    location.replace('/signin')
-  }
-
   const fetcher = useFetcher();
   const submitBtnRef = useRef(null);
 
   const data = useLoaderData();
   const profile = FULFILLED.includes(data?.profile?.status) ? data?.profile?.data?.profile : (data?.profile?.reason || data?.profile)
 
+  if (!profile) 
+    return <p>Cannot load profile page properly</p>
+  
   const [newProfile, setNewProfile] = useState({
     firstName: profile.firstName,
     lastName: profile.lastName,
@@ -78,8 +54,6 @@ function Profile() {
     })
     submitBtnRef.current.classList.toggle('disabled', true)
   }
-
-
 
   return (
     <div className="body_container" style={{ height: `${windowHeight}px` }}>
@@ -127,6 +101,33 @@ function Profile() {
       </section>
     </div>
   )
+}
+
+export async function loader() {
+  const status = await authMe();
+
+  if (!status.data.authenticated) return redirectDocument("/signin")
+
+  const profile = await loadProfile();
+  return { profile }
+}
+
+export async function action({ request }) {
+  let input = {}
+  const formData = await request.formData();
+
+  const currentProfile = JSON.parse(formData.get("profile"))
+
+  for (let key of PROFILE_KEYS) {
+    let newValue = formData.get(key);
+
+    // Only update new profile values to server
+    if (currentProfile[key] !== newValue)
+      input[key] = newValue;
+  }
+
+  await updateProfile(input);
+  return
 }
 
 

@@ -1,16 +1,20 @@
-import { useLoaderData, useNavigate, Link } from "react-router-dom";
+import { useLoaderData, useNavigate, Link, redirectDocument } from "react-router-dom";
 import { useState, useRef } from "react";
 
-import { createRequest, loadManyPost, createPost } from "../api/operations"
+import { createRequest, loadManyPost, createPost, authMe, logMeOut } from "../api/operations"
 import { PostSection } from "./components/Section"
 import PostDialog from "./components/PostDialog";
 import { FULFILLED } from "../utils/utils";
-
+import { isEmpty as __isEmpty } from "lodash";
 import './styles/home.css'
 
 
 
 export async function loader() {
+  const status = await authMe();
+
+  if (!status.data.authenticated) return redirectDocument("/signin")
+
   const _posts = loadManyPost({ myPosts: true })
 
   //TAKE NOTE: CHANGING Promise.allSettled to Promise.all changes the shape of the response obj.
@@ -22,12 +26,10 @@ export async function loader() {
 function Home() {
   const nav = useNavigate();
   const dialogRef = useRef()
+  const { posts: u_posts } = useLoaderData() || { posts: {} };
 
-  if (!localStorage.getItem("token")) {
-    location.replace('/signin')
-  }
-
-  const { posts: u_posts } = useLoaderData();
+  if (__isEmpty(u_posts))
+    return location.href = 'http://localhost:5172' + "/signin"
 
   const [posts, setPosts] = useState(FULFILLED.includes(u_posts.status) ? u_posts.value?.data : u_posts.reason);
 
@@ -57,16 +59,10 @@ function Home() {
     }
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    if (!localStorage.getItem('token')) {
-      nav('/signin')
-
-      // Reload to clear request cache and allow signin in again
-      // Do not put above nav('/signin) as this refreshes the /home page
-      // after token removal, which causes unauthorized error
-      return window.location.reload()
-    }
+  const handleLogout = async () => { 
+    console.log('Logging out!')
+    await logMeOut(); 
+    return location.href = 'http://localhost:5172' + "/signin"
   }
 
   const makeRequest = async (e) => {
@@ -111,6 +107,6 @@ function Home() {
       <PostDialog closeDialog={closeDialog} dialogRef={dialogRef} handlePostSubmit={handlePostSubmit} />
     </div>
   )
-}
 
+}
 export default Home;
