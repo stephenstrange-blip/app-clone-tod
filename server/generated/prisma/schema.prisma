@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -18,69 +12,59 @@ model User {
   id       Int      @id @default(autoincrement())
   githubId Int?     @unique
   username String?  @unique
-  password String?  @db.Text
+  password String?
   profile  Profile?
 }
 
 model UserNetwork {
   followerId  Int
   followingId Int
+  assignedAt  DateTime @default(now())
   follower    Profile  @relation("follower", fields: [followerId], references: [userId])
   following   Profile  @relation("following", fields: [followingId], references: [userId])
-  assignedAt  DateTime @default(now())
 
   @@id([followerId, followingId])
 }
 
 model FollowRequest {
-  targetId    Int
   requesterId Int
+  createdAt   DateTime @default(now())
+  targetId    Int
   requester   Profile  @relation("requester", fields: [requesterId], references: [userId], onDelete: Cascade)
   target      Profile  @relation("target", fields: [targetId], references: [userId], onDelete: Cascade)
-  createdAt   DateTime @default(now())
 
-  @@id(name: "requestId", [targetId, requesterId])
+  @@id([targetId, requesterId], name: "requestId")
 }
 
 model Profile {
-  userId Int  @id @unique
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  firstName String  @db.VarChar(50)
-  lastName  String  @db.VarChar(50)
-  title     String? @db.Text
-  bio       String? @db.Text
-
-  // A user can have 0 or more followers/followings
-  followers UserNetwork[]   @relation("follower")
-  following UserNetwork[]   @relation("following")
+  userId    Int             @id @unique
+  firstName String          @db.VarChar(50)
+  lastName  String          @db.VarChar(50)
+  title     String?
+  bio       String?
+  comments  Comment[]
   requests  FollowRequest[] @relation("requester")
   targets   FollowRequest[] @relation("target")
-
-  posts    Post[]
-  comments Comment[]
-  reaction Reactions[]
+  posts     Post[]
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reaction  Reactions[]
+  followers UserNetwork[]   @relation("follower")
+  following UserNetwork[]   @relation("following")
 }
 
 model Post {
-  id      Int     @id @default(autoincrement())
-  title   String  @db.Text
-  message String?
-
-  createdAt DateTime @default(now()) @db.Timestamptz(0)
-  updatedAt DateTime @updatedAt
-  published Boolean  @default(false)
-
-  comments  Comment[]
-  reactions Reactions[]
-
-  // If you do not specify a referential action, Prisma ORM uses the following defaults:
-  // onDelete:	(optional relations) -> SetNull,	(required) -> Restrict
-  // onUpdate:	(optional relations) -> Cascade,  (required) ->	Cascade
+  id         Int         @id @default(autoincrement())
+  title      String
+  message    String?
+  createdAt  DateTime    @default(now()) @db.Timestamptz(0)
+  updatedAt  DateTime    @updatedAt
+  published  Boolean     @default(false)
   authorId   Int?
   categoryId Int?
-  author     Profile?  @relation(fields: [authorId], references: [userId])
-  category   Category? @relation(fields: [categoryId], references: [id])
+  comments   Comment[]
+  author     Profile?    @relation(fields: [authorId], references: [userId])
+  category   Category?   @relation(fields: [categoryId], references: [id])
+  reactions  Reactions[]
 }
 
 model Category {
@@ -90,43 +74,38 @@ model Category {
 }
 
 model Comment {
-  id       Int    @id @default(autoincrement())
-  path     String @unique @db.VarChar(255)
-  depth    Int
-  numchild Int    @default(0)
-
+  id        Int      @id @default(autoincrement())
+  path      String   @unique @db.VarChar(255)
+  depth     Int
+  numchild  Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  message   String   @db.Text
+  message   String
+  postId    Int
+  authorId  Int
   isDeleted Boolean  @default(false)
-
-  postId   Int
-  authorId Int
-  post     Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
-  author   Profile @relation(fields: [authorId], references: [userId], onDelete: Cascade)
+  author    Profile  @relation(fields: [authorId], references: [userId], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@index([path])
 }
 
-// to model a table for like, heart, etc.
 model Reacts {
   id        Int         @id @default(autoincrement())
-  name      String      @db.Text
+  name      String
   reactions Reactions[]
 }
 
 model Reactions {
-  id        Int @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   reactId   Int
   postId    Int
-  reactorId Int
-
-  post    Post    @relation(fields: [postId], references: [id])
-  react   Reacts  @relation(fields: [reactId], references: [id])
-  reactor Profile @relation(fields: [reactorId], references: [userId])
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  reactorId Int
+  post      Post     @relation(fields: [postId], references: [id])
+  react     Reacts   @relation(fields: [reactId], references: [id])
+  reactor   Profile  @relation(fields: [reactorId], references: [userId])
 }
 
 model Session {

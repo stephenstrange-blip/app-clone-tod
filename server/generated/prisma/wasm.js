@@ -134,9 +134,9 @@ exports.Prisma.UserNetworkScalarFieldEnum = {
 };
 
 exports.Prisma.FollowRequestScalarFieldEnum = {
-  targetId: 'targetId',
   requesterId: 'requesterId',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  targetId: 'targetId'
 };
 
 exports.Prisma.ProfileScalarFieldEnum = {
@@ -171,9 +171,9 @@ exports.Prisma.CommentScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   message: 'message',
-  isDeleted: 'isDeleted',
   postId: 'postId',
-  authorId: 'authorId'
+  authorId: 'authorId',
+  isDeleted: 'isDeleted'
 };
 
 exports.Prisma.ReactsScalarFieldEnum = {
@@ -185,9 +185,9 @@ exports.Prisma.ReactionsScalarFieldEnum = {
   id: 'id',
   reactId: 'reactId',
   postId: 'postId',
-  reactorId: 'reactorId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  reactorId: 'reactorId'
 };
 
 exports.Prisma.SessionScalarFieldEnum = {
