@@ -453,12 +453,35 @@ async function addCategory({ name }) {
   });
 }
 
+async function getCategory({ id }) {
+  return await prisma.category.findFirst({
+    where: {
+      AND: [{ id }, { name: "Generic" }],
+    },
+    select: {
+      name: true,
+    },
+  });
+}
+
 async function addReacts({ data }) {
   return await prisma.reacts.createMany({
     data,
     skipDuplicates: true,
   });
 }
+
+async function getReacts() {
+  return await prisma.reacts.findMany({
+    where: {
+      OR: [{ name: "like" }, { name: "heart" }],
+    },
+    select: {
+      name: true,
+    },
+  });
+}
+
 module.exports = {
   fetchCredentials,
   fetchUser,
@@ -468,7 +491,9 @@ module.exports = {
   getNetwork,
   getManyPosts,
   getComment,
+  getCategory,
   getReply,
+  getReacts,
   addUser,
   addPost,
   addProfile,
