@@ -4,9 +4,15 @@ const {
   addProfile,
   addCategory,
   addReacts,
+  fetchUser,
+  getCategory,
+  getProfile,
+  getReacts,
 } = require("./api/db/database");
 
 const initDbValues = async () => {
+  let _admin;
+
   const password = await bcrypt.hash("Admin", 10);
   const adminProfile = {
     firstName: "Admin",
@@ -29,22 +35,40 @@ const initDbValues = async () => {
     heart: "heart",
   };
 
+  const seedAdmin = fetchUser({ id: 1 });
+  const seedCategory = getCategory({ id: 1 });
+  const seedProfile = getProfile({ userId: 1 });
+  const seedReacts = getReacts();
+
+  const [_seedAdmin, _seedCategory, _seedProfile, _seedReacts] =
+    await Promise.all([seedAdmin, seedCategory, seedProfile, seedReacts]);
+
   console.log("Creating admin user...");
-  const _admin = await addUser(admin);
+  if (!_seedAdmin) _admin = await addUser(admin);
 
   console.log("Creating admin profile...");
-  await addProfile({
-    ...adminProfile,
-    userId: _admin.id,
-  });
+  if (!_seedProfile)
+    await addProfile({
+      ...adminProfile,
+      userId: _admin.id,
+    });
 
   console.log("Creating default category");
-  await addCategory(category);
+  if (!_seedCategory) await addCategory(category);
 
   console.log("Creating default reacts");
-  await addReacts({
-    data: [{ name: reactions.like }, { name: reactions.heart }],
-  });
+  if (_seedReacts && _seedReacts.length === 1)
+    if (_seedReacts[0].name === reactions.like)
+      // Add heart reaction if like is present
+      await addReacts({ name: reactions.heart });
+    else
+      // Otherwise, add like reaction
+      await addReacts({ name: reactions.like });
+
+  if (!_seedReacts)
+    await addReacts({
+      data: [{ name: reactions.like }, { name: reactions.heart }],
+    });
 
   return "Finished seeding database...";
 };
