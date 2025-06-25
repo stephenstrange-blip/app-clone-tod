@@ -378,9 +378,9 @@ async function addReply({ message, commentId, authorId, postId }) {
       message,
       authorId,
       postId,
-      ignoreColumn: {
-        createdAt: true,
-      },
+      // ignoreColumn: {
+      //   createdAt: true,
+      // },
     },
   });
 }
