@@ -29,7 +29,7 @@ function Home() {
   const { posts: u_posts } = useLoaderData() || { posts: {} };
 
   if (__isEmpty(u_posts))
-    return location.href = 'http://localhost:5172' + "/signin"
+    return location.href = "/signin"
 
   const [posts, setPosts] = useState(FULFILLED.includes(u_posts.status) ? u_posts.value?.data : u_posts.reason);
 
@@ -62,7 +62,7 @@ function Home() {
   const handleLogout = async () => { 
     console.log('Logging out!')
     await logMeOut(); 
-    return location.href = 'http://localhost:5172' + "/signin"
+    return location.href = "/signin"
   }
 
   const makeRequest = async (e) => {
