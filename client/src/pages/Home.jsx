@@ -59,9 +59,9 @@ function Home() {
     }
   }
 
-  const handleLogout = async () => { 
+  const handleLogout = async () => {
     console.log('Logging out!')
-    await logMeOut(); 
+    await logMeOut();
     return location.href = "/signin"
   }
 
@@ -92,7 +92,8 @@ function Home() {
       <div className="flex flex-center flex-row">
         <button onClick={handleLogout}>Logout</button>
         <button onClick={() => dialogRef.current.showModal()}>Create Post</button>
-        <Link to={'/home/profile'} style={{ minWidth: 'fit-content' }} ><button>Visit Profile</button></Link>
+        <Link to={"/chatroom"} style={{ minWidth: 'fit-content' }}><button>Go to chatroom</button></Link>
+        <Link to={'/home/profile'} style={{ minWidth: 'fit-content' }}><button>Visit Profile</button></Link>
         <form onSubmit={makeRequest}>
           <button typeof="submit">Request Follow</button>
           <label htmlFor="makeRequest"></label>
