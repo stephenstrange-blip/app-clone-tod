@@ -1,0 +1,67 @@
+.chat-header {
+  gap: 1rem;
+}
+
+.chat-main {
+  min-width: 65%;
+  height: 100%;
+}
+
+.chat-main > * {
+  width: 100%;
+}
+
+.chat-main > section {
+  padding: 1rem;
+  min-height: 500px;
+  min-width: 100%;
+}
+
+.chat-main > section > ul {
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.chat-main > span {
+  height: max-content;
+  padding: 0.2rem 0.2rem 0.2rem 0.5rem;
+  gap: 1rem;
+  border: 0.5px solid grey;
+  border-radius: 25px;
+}
+
+.chat-reaction +  form >input {
+  width: 100%;
+  background-color: transparent;
+  padding: 0.5rem;
+
+  border: 0px;
+  border-radius: 25px;
+}
+
+.chat-reaction + form > input:hover {
+  background-color: rgb(104, 107, 110);
+  /* color: white; */
+}
+
+.events {
+  position: absolute;
+  border: .5px solid grey;
+  min-width: 300px;
+  min-height: 550px;
+  top: 0px;
+  left: 0px;
+}
+.events {
+  display: grid;
+  grid-template: min(60px) 1fr / 1fr;
+  gap: 1.5rem;
+  flex-flow: column nowrap;
+}
+
+.events > ul {
+  display: flex;
+  flex-flow: column nowrap;
+  padding: .2rem;
+  justify-content: flex-end;
+}
