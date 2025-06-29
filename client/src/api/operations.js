@@ -1,8 +1,6 @@
 import apiClient from "./client";
 import { isValidForRetry } from "../utils/utils";
 
-
-
 apiClient.interceptors.request.use(
   (config) => {
     // // for retries
@@ -180,10 +178,10 @@ export const loadComment = async (input) => {
   return apiClient.get(
     `/users/posts/${input.postId}/comments/${input.commentId}`,
     {
+      signal: AbortSignal.timeout(8000),
+      timeout: 8000,
       params: {
         getReplies: input.getReplies,
-        signal: AbortSignal.timeout(8000),
-        timeout: 8000,
       },
     }
   );
