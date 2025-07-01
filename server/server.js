@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const __isEmpty = require("lodash").isEmpty;
 
 const expressSession = require("express-session");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
@@ -9,7 +10,6 @@ const passport = require("./api/passport/passport").passport;
 
 const { createServer } = require("node:http");
 const { Server } = require("socket.io");
-const { initDb } = require("./api/socket/socketDb");
 
 const routes = require("./api/index");
 const handlers = require("./api/socket/index");
@@ -64,16 +64,6 @@ async function main() {
     res.status(403).json({ message: "Page not found" });
   });
 
-  const db = await initDb();
-
-  await db.exec(`
-      CREATE TABLE IF NOT EXISTS messages (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        client_Offset TEXT UNIQUE,
-        content TEXT
-      );
-    `);
-
   const io = new Server(server, {
     connectionStateRecovery: {},
     path: "/chatroom/",
@@ -83,19 +73,61 @@ async function main() {
     },
   });
 
-  io.on("connection", async (socket) => {
-    console.log(
-      `A user has connected. ${io.engine.clientsCount} user has connected in total`
-    );
-    socket.join("public");
-    socket.emit("fireEvent", "A user connected");
+  io.engine.use(cookieParser(process.env.COOKIE_SECRET));
 
-    handlers.disconnect(io, socket);
-    handlers.recordMessage(io, socket, db);
+  io.engine.use((req, res, next) => {
+    const isHandShake = req._query.sid === undefined;
+    if (isHandShake) {
+      console.log("Authenticating socket handshake http request");
+      passport.authenticate("jwt", { session: false }, (err, user) => {
+        if (err || !user) {
+          const cookies = !__isEmpty(req.cookies) && Object.keys(req.cookies);
+          const signedCookies =
+            !__isEmpty(req.signedCookies) && Object.keys(req.signedCookies);
 
-    if (!socket.recovered) {
-      await handlers.recover(io, socket, db);
+          if (cookies) {
+            console.log("Clearing unsigned cookies");
+            for (let name of cookies) res.clearCookie(name, cookieOptions);
+          }
+
+          if (signedCookies) {
+            console.log("Clearing signed cookies");
+            for (let name of signedCookies)
+              res.clearCookie(name, cookieOptions);
+          }
+
+          const err = new Error("Something went wrong");
+          err.data = {
+            message: !user ? "User does not exist" : "Unauthorized Access",
+          };
+          return next(err);
+        }
+
+        req.user = user;
+        next();
+        // req.login(user, next); -> no need to call this as jwt is not session-based and needs a de/serializer from passport local
+      })(req, res, next);
+    } else {
+      next();
     }
+  });
+
+  io.of("/").on("connection", async (socket) => {
+    console.log(
+      "A user connected to main namespace",
+      `${io.engine.clientsCount} user has connected in total`
+    );
+  });
+
+  io.of("/chats").on("connection", async (socket) => {
+    console.log("A user has connected to chats namespace");
+    socket.emit("fireEvent", "A user connected to chats namespace");
+
+    handlers.room(io, socket);
+    handlers.disconnect(io, socket);
+    handlers.recordMessage(io, socket);
+
+    if (!socket.recovered) await handlers.recover(io, socket);
   });
 
   server.listen(8080);
