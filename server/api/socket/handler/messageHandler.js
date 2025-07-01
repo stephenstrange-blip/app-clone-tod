@@ -1,15 +1,35 @@
-module.exports = (io, socket, db) => {
-  socket.on("chat", async (input) => {
-    let result;
+const { addMessage, getRoom } = require("../../db/database");
+
+module.exports = (io, socket) => {
+  socket.on("chat", async (input, clientOffset, roomId, callback) => {
+    let result,
+      room,
+      user = socket.request.user;
 
     try {
       console.log(`A user is saying, ${input}`);
-      result = await db.run("INSERT INTO messages (content) VALUES (?)", input);
-      console.log(result);
+      const data = {
+        content: input,
+        roomId: Number(roomId),
+        authorId: user.id,
+        clientOffset,
+      };
+
+      result = await addMessage({ data });
+      room = await getRoom({ roomId: Number(roomId) });
     } catch (err) {
-      return console.error(err);
+      if (err.errno === 19) callback();
+      else console.error(err);
+
+      // by not calling callback and returning, client socket retries to emit
+      return;
     }
 
-    io.to("public").emit("chat", input, result.lastID);
+    // Do not flag the message when sending to others, except for the author
+    socket.emit("chat", { content: input, id: result.id, myMessage: true });
+    socket
+      .to(room.name || "public")
+      .emit("chat", { content: input, id: result.id });
+    callback();
   });
 };
