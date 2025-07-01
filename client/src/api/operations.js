@@ -187,6 +187,13 @@ export const loadComment = async (input) => {
   );
 };
 
+export const loadManyMessage = async (input) => {
+  return apiClient.get(`/users/chats/${input.chatId}`, {
+    signal: AbortSignal.timeout(8000),
+    timeout: 8000,
+  });
+};
+
 export const updateProfile = async (input) => {
   return apiClient.put("/users/profile", input);
 };
