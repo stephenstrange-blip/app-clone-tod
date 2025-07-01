@@ -1,3 +1,18 @@
+.chat-list {
+  padding: 1rem;
+  min-width: 250px;
+  border: .5px solid red 
+}
+
+.chat-list > ul {
+  padding-top: 5rem;
+}
+
+.chat-list > ul li {
+  padding: .5rem;
+  border: .5px solid yellow;
+}
+
 .chat-header {
   gap: 1rem;
 }
@@ -20,6 +35,15 @@
 .chat-main > section > ul {
   gap: 0.5rem;
   justify-content: flex-end;
+  width: 100%;
+}
+
+.chat-main > section > ul > li {
+  max-width: 300px;
+}
+
+.myMessage {
+  margin-inline-start: auto;
 }
 
 .chat-main > span {
@@ -30,7 +54,7 @@
   border-radius: 25px;
 }
 
-.chat-reaction +  form >input {
+.chat-reaction + form > input {
   width: 100%;
   background-color: transparent;
   padding: 0.5rem;
@@ -46,22 +70,23 @@
 
 .events {
   position: absolute;
-  border: .5px solid grey;
-  min-width: 300px;
-  min-height: 550px;
+  border: 0.5px solid grey;
+  min-width: 400px;
+  max-height: 150px;
   top: 0px;
-  left: 0px;
-}
-.events {
+  right: 0px;
+
   display: grid;
   grid-template: min(60px) 1fr / 1fr;
-  gap: 1.5rem;
-  flex-flow: column nowrap;
+  
 }
-
 .events > ul {
   display: flex;
   flex-flow: column nowrap;
-  padding: .2rem;
+  padding: 0.2rem;
   justify-content: flex-end;
+  overflow: hidden;
 }
+
+
+
