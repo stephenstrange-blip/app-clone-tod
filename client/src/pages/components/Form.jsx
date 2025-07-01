@@ -1,5 +1,6 @@
 import { Form, useNavigation } from 'react-router-dom'
 import { showBtns, hideBtns } from '../../utils/utils';
+import { useState, useEffect } from 'react';
 
 export function CustomForm({ children, url, page, ref, disabled, classname }) {
   const nav = useNavigation();
@@ -62,3 +63,21 @@ export function CreateCommentForm({postId}) {
   )
 }
 
+
+export function MessageForm({ chatId, state, }) {
+  const [inputValue, setInputValue] = useState('');
+
+  useEffect(() => {
+    if (state === 'loading')
+      setInputValue('')
+    
+  }, [state])
+
+  return (
+    <Form action={`/chatroom/${chatId}`} method='post'>
+      <input type="hidden" name="intent" defaultValue={'submit_message'} />
+      <label htmlFor="message"></label>
+      <input disabled={state === 'submitting'} id="message" name="message" type="text" value={inputValue} onChange={e => setInputValue(e.currentTarget.value)} placeholder="Input your message here" />
+    </Form>
+  )
+}
