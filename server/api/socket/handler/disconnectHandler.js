@@ -1,7 +1,6 @@
 module.exports = (io, socket) => {
   socket.once("disconnect", () => {
-    socket.leave("public");
-    io.emit("fireEvent", "A user disconnected");
+    io.of("/chats").emit("fireEvent", "A user disconnected");
 
     console.log(
       `A user has disconnected. ${io.engine.clientsCount} users is/are still connected`
