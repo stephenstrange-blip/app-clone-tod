@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import addReactionIcon from '../../assets/add_reaction.svg'
 import { useLoaderData, useNavigation } from 'react-router-dom';
 import { chatSocket } from '../../api/socket/socket';
@@ -35,6 +35,7 @@ export default function ChatRoom({ name }) {
   const { data, chatId } = useLoaderData();
   const [events, setEvents] = useState(['Events']);
   const [messages, setMessages] = useState(data || []);
+  const chatRef = useRef(null);
 
   useEffect(() => {
     function onChat(newMessage) {
@@ -59,6 +60,7 @@ export default function ChatRoom({ name }) {
     chatSocket.onAny(onEvent);
 
     chatSocket.auth.serverOffset = messages[messages.length - 1]?.id || 0;
+    chatRef.current.scrollTo({ top: 100, left: 0, behavior: 'smooth'});
 
     return () => {
       chatSocket.off('chat', onChat);
@@ -78,7 +80,7 @@ export default function ChatRoom({ name }) {
       </div>
       <main className="chat-main flex flex-center flex-col">
         <section className="chat-section flex ">
-          <ul className="flex flex-col">
+          <ul ref={chatRef} className="flex flex-col">
             <Messages messages={messages} />
           </ul>
         </section>
