@@ -11,6 +11,7 @@ const profileRouter = require("./profile").router;
 const requestRouter = require("./request").router;
 const networkRouter = require("./network").router;
 const reactionRouter = require("./reaction").router;
+const chatRouter = require("./chat").router;
 
 let cookieOptions = {
   httpOnly: true,
@@ -56,6 +57,7 @@ router.use("/posts", postRouter);
 router.use("/request", requestRouter);
 router.use("/network", networkRouter);
 router.use("/reaction", reactionRouter);
+router.use("/chats", chatRouter);
 router.use(error);
 
 module.exports = { router };

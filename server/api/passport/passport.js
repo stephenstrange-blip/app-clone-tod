@@ -101,6 +101,7 @@ passport.use(
       callbackURL: `${process.env.BASE_SERVER_URL}/auth/github/callback`,
       state: false,
       passReqToCallback: true,
+      // allRawEmails: true
     },
     function (req, accessToken, refreshToken, profile, done) {
       (async () => {
@@ -109,7 +110,6 @@ passport.use(
             console.log(
               `Access token: ${accessToken}, Refresh token: ${refreshToken}`
             );
-            console.log("Github profile:", profile);
           }
 
           if (!profile?.id)

@@ -482,6 +482,35 @@ async function getReacts() {
   });
 }
 
+async function addMessage({ data }) {
+  return await prisma.messages.create({
+    data,
+    select: {
+      id: true,
+      authorId: true,
+    },
+  });
+}
+
+async function getManyMessage({ where, select, orderBy }) {
+  return await prisma.messages.findMany({
+    where,
+    select,
+    orderBy,
+  });
+}
+
+async function getRoom({ roomId }) {
+  return await prisma.rooms.findUnique({
+    where: {
+      id: roomId,
+    },
+    select: {
+      name: true,
+    },
+  });
+}
+
 module.exports = {
   fetchCredentials,
   fetchUser,
@@ -493,7 +522,9 @@ module.exports = {
   getComment,
   getCategory,
   getReply,
+  getRoom,
   getReacts,
+  getManyMessage,
   addUser,
   addPost,
   addProfile,
@@ -504,6 +535,7 @@ module.exports = {
   addReply,
   addCategory,
   addReacts,
+  addMessage,
   putProfile,
   putPost,
   deletePost,

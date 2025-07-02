@@ -1,14 +1,12 @@
-import { useLoaderData, useNavigate, Link, redirectDocument } from "react-router-dom";
-import { useState, useRef } from "react";
-
+import { useLoaderData, Link, redirectDocument } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import { socket } from "../api/socket/socket";
 import { createRequest, loadManyPost, createPost, authMe, logMeOut } from "../api/operations"
 import { PostSection } from "./components/Section"
 import PostDialog from "./components/PostDialog";
 import { FULFILLED } from "../utils/utils";
 import { isEmpty as __isEmpty } from "lodash";
 import './styles/home.css'
-
-
 
 export async function loader() {
   const status = await authMe();
@@ -24,12 +22,35 @@ export async function loader() {
 }
 
 function Home() {
-  const nav = useNavigate();
-  const dialogRef = useRef()
   const { posts: u_posts } = useLoaderData() || { posts: {} };
-
+  
   if (__isEmpty(u_posts))
     return location.href = "/signin"
+  
+  const dialogRef = useRef()
+  const [connected, setConnected] = useState(socket.connected);
+  const [reconnected, setReconnected] = useState(socket.active);
+
+  useEffect(() => {
+    function onConnect() {
+      setConnected(socket.connected);
+    }
+
+    function onDisconnect(reason) {
+      console.log(`Socket disconnected due to: ${reason}`)
+      setConnected(socket.connected);
+      setReconnected(socket.active);
+    }
+    socket.on('connect', onConnect);
+    socket.on('disconnect', onDisconnect);
+
+    socket.connect();
+
+    return () => {
+      socket.off('connect', onConnect);
+      socket.off('disconnect', onDisconnect);
+    }
+  }, [])
 
   const [posts, setPosts] = useState(FULFILLED.includes(u_posts.status) ? u_posts.value?.data : u_posts.reason);
 
@@ -59,9 +80,10 @@ function Home() {
     }
   }
 
-  const handleLogout = async () => { 
+  const handleLogout = async () => {
     console.log('Logging out!')
-    await logMeOut(); 
+    socket.disconnect();
+    await logMeOut();
     return location.href = "/signin"
   }
 
@@ -92,7 +114,8 @@ function Home() {
       <div className="flex flex-center flex-row">
         <button onClick={handleLogout}>Logout</button>
         <button onClick={() => dialogRef.current.showModal()}>Create Post</button>
-        <Link to={'/home/profile'} style={{ minWidth: 'fit-content' }} ><button>Visit Profile</button></Link>
+        <Link to={"/chatroom"} style={{ minWidth: 'fit-content' }}><button>Go to chatroom</button></Link>
+        <Link to={'/home/profile'} style={{ minWidth: 'fit-content' }}><button>Visit Profile</button></Link>
         <form onSubmit={makeRequest}>
           <button typeof="submit">Request Follow</button>
           <label htmlFor="makeRequest"></label>
