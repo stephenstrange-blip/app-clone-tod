@@ -37,7 +37,6 @@ model FollowRequest {
 }
 
 model Profile {
-  // A user can have 0 or more followers/followings
   userId    Int             @id @unique
   firstName String          @db.VarChar(50)
   lastName  String          @db.VarChar(50)
@@ -46,6 +45,7 @@ model Profile {
   comments  Comment[]
   requests  FollowRequest[] @relation("requester")
   targets   FollowRequest[] @relation("target")
+  messages  Messages[]
   posts     Post[]
   user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   reaction  Reactions[]
@@ -54,9 +54,6 @@ model Profile {
 }
 
 model Post {
-  // If you do not specify a referential action, Prisma ORM uses the following defaults:
-  // onDelete:	(optional relations) -> SetNull,	(required) -> Restrict
-  // onUpdate:	(optional relations) -> Cascade,  (required) ->	Cascade
   id         Int         @id @default(autoincrement())
   title      String
   message    String?
@@ -110,6 +107,24 @@ model Reactions {
   post      Post     @relation(fields: [postId], references: [id])
   react     Reacts   @relation(fields: [reactId], references: [id])
   reactor   Profile  @relation(fields: [reactorId], references: [userId])
+}
+
+model Messages {
+  id           Int      @id @default(autoincrement())
+  clientOffset String   @unique
+  content      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  roomId       Int      @default(1)
+  room         Rooms    @relation(fields: [roomId], references: [id])
+  authorId     Int
+  author       Profile  @relation(fields: [authorId], references: [userId], onDelete: Cascade)
+}
+
+model Rooms {
+  id       Int        @id @default(autoincrement())
+  name     String
+  Messages Messages[]
 }
 
 model Session {

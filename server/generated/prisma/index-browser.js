@@ -190,6 +190,21 @@ exports.Prisma.ReactionsScalarFieldEnum = {
   reactorId: 'reactorId'
 };
 
+exports.Prisma.MessagesScalarFieldEnum = {
+  id: 'id',
+  clientOffset: 'clientOffset',
+  content: 'content',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  roomId: 'roomId',
+  authorId: 'authorId'
+};
+
+exports.Prisma.RoomsScalarFieldEnum = {
+  id: 'id',
+  name: 'name'
+};
+
 exports.Prisma.SessionScalarFieldEnum = {
   id: 'id',
   sid: 'sid',
@@ -223,6 +238,8 @@ exports.Prisma.ModelName = {
   Comment: 'Comment',
   Reacts: 'Reacts',
   Reactions: 'Reactions',
+  Messages: 'Messages',
+  Rooms: 'Rooms',
   Session: 'Session'
 };
 

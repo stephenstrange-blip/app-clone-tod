@@ -45,6 +45,7 @@ model Profile {
   comments  Comment[]
   requests  FollowRequest[] @relation("requester")
   targets   FollowRequest[] @relation("target")
+  messages  Messages[]
   posts     Post[]
   user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   reaction  Reactions[]
@@ -106,6 +107,24 @@ model Reactions {
   post      Post     @relation(fields: [postId], references: [id])
   react     Reacts   @relation(fields: [reactId], references: [id])
   reactor   Profile  @relation(fields: [reactorId], references: [userId])
+}
+
+model Messages {
+  id           Int      @id @default(autoincrement())
+  clientOffset String   @unique
+  content      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  roomId       Int      @default(1)
+  room         Rooms    @relation(fields: [roomId], references: [id])
+  authorId     Int
+  author       Profile  @relation(fields: [authorId], references: [userId], onDelete: Cascade)
+}
+
+model Rooms {
+  id       Int        @id @default(autoincrement())
+  name     String
+  Messages Messages[]
 }
 
 model Session {
