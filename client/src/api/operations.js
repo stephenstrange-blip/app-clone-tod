@@ -77,6 +77,13 @@ export const authGitHub = async () => {
   });
 };
 
+export const authGoogle = async () => {
+  return apiClient.get("/auth/google", {
+    signal: AbortSignal.timeout(8000),
+    timeout: 8000,
+  });
+};
+
 export const authMe = async () => {
   return apiClient.get("/users/auth/me", {
     signal: AbortSignal.timeout(8000),

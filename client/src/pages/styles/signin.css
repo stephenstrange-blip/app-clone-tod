@@ -111,6 +111,6 @@ i {
 }
 
 .alt-auth > span:last-of-type {
-  cursor: not-allowed;
+  /* cursor: not-allowed; */
 }
 

@@ -20,7 +20,16 @@ function LoginForm() {
   const handleGithubAuth = async () => {
     try {
       // cannot use AXIOS or any fetch API as those don't respect CORS headers on redirects
-      window.location.href = import.meta.env.VITE_BASE_SERVER_URL + '/auth/github'
+      window.location.href = import.meta.env.VITE_BASE_SERVER_URL + '/auth/github/'
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  const handleGoogleAuth = async () => {
+    try {
+      // cannot use AXIOS or any fetch API as those don't respect CORS headers on redirects
+      window.location.href = import.meta.env.VITE_BASE_SERVER_URL + '/auth/google/'
     } catch (err) {
       console.error(err);
     }
@@ -44,7 +53,7 @@ function LoginForm() {
         <span onClick={handleGithubAuth}>
           <i className="devicon-github-original"></i>
         </span>
-        <span>
+        <span onClick={handleGoogleAuth}>
           <i className="devicon-google-plain"></i>
         </span>
       </div>
