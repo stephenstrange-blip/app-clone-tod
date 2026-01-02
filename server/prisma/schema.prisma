@@ -11,6 +11,7 @@ datasource db {
 model User {
   id       Int      @id @default(autoincrement())
   githubId Int?     @unique
+  googleId String?  @unique @db.VarChar(50)
   username String?  @unique
   password String?
   profile  Profile?
@@ -37,20 +38,21 @@ model FollowRequest {
 }
 
 model Profile {
-  userId    Int             @id @unique
-  firstName String          @db.VarChar(50)
-  lastName  String          @db.VarChar(50)
-  title     String?
-  bio       String?
-  comments  Comment[]
-  requests  FollowRequest[] @relation("requester")
-  targets   FollowRequest[] @relation("target")
-  messages  Messages[]
-  posts     Post[]
-  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  reaction  Reactions[]
-  followers UserNetwork[]   @relation("follower")
-  following UserNetwork[]   @relation("following")
+  userId     Int             @id @unique
+  firstName  String          @db.VarChar(50)
+  lastName   String          @db.VarChar(50)
+  profileUrl String?
+  title      String?
+  bio        String?
+  comments   Comment[]
+  requests   FollowRequest[] @relation("requester")
+  targets    FollowRequest[] @relation("target")
+  messages   Messages[]
+  posts      Post[]
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reaction   Reactions[]
+  followers  UserNetwork[]   @relation("follower")
+  following  UserNetwork[]   @relation("following")
 }
 
 model Post {
@@ -60,6 +62,7 @@ model Post {
   createdAt  DateTime    @default(now()) @db.Timestamptz(0)
   updatedAt  DateTime    @updatedAt
   published  Boolean     @default(false)
+  isDeleted  Boolean     @default(false)
   authorId   Int?
   categoryId Int?
   comments   Comment[]
@@ -115,6 +118,7 @@ model Messages {
   content      String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  isDeleted    Boolean  @default(false)
   roomId       Int      @default(1)
   room         Rooms    @relation(fields: [roomId], references: [id])
   authorId     Int

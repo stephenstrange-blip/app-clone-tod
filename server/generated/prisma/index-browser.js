@@ -123,6 +123,7 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   githubId: 'githubId',
+  googleId: 'googleId',
   username: 'username',
   password: 'password'
 };
@@ -143,6 +144,7 @@ exports.Prisma.ProfileScalarFieldEnum = {
   userId: 'userId',
   firstName: 'firstName',
   lastName: 'lastName',
+  profileUrl: 'profileUrl',
   title: 'title',
   bio: 'bio'
 };
@@ -154,6 +156,7 @@ exports.Prisma.PostScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   published: 'published',
+  isDeleted: 'isDeleted',
   authorId: 'authorId',
   categoryId: 'categoryId'
 };
@@ -196,6 +199,7 @@ exports.Prisma.MessagesScalarFieldEnum = {
   content: 'content',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
+  isDeleted: 'isDeleted',
   roomId: 'roomId',
   authorId: 'authorId'
 };
